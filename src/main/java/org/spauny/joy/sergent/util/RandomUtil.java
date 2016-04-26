@@ -5,14 +5,10 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.ArrayUtils;
-import org.uncommons.maths.number.NumberGenerator;
-import org.uncommons.maths.random.DefaultSeedGenerator;
-import org.uncommons.maths.random.DiscreteUniformGenerator;
-import org.uncommons.maths.random.MersenneTwisterRNG;
-import org.uncommons.maths.random.SeedException;
-import org.uncommons.maths.random.SeedGenerator;
 
 /**
  *
@@ -53,12 +49,12 @@ public class RandomUtil {
         return rand;
     }
 
-    public static int secureRandInt(int min, int max) throws NoSuchAlgorithmException {
+    public static int secureRandInt(int min, int max) {
         return secureRandInt(min, max, new ArrayList<Integer>());
     }
 
-    public static int secureRandInt(int min, int max, int... ignore) throws NoSuchAlgorithmException {
-        SecureRandom secRandom = SecureRandom.getInstance("SHA1PRNG");
+    public static int secureRandInt(int min, int max, int... ignore) {
+        SecureRandom secRandom = buildSecureRandom();
         int randomNum = secRandom.nextInt((max - min) + 1) + min;
         if (ignore != null) {
             while (ArrayUtils.contains(ignore, randomNum)) {
@@ -69,9 +65,8 @@ public class RandomUtil {
 
     }
 
-    public static int secureRandInt(int min, int max, List<Integer> ignore) throws NoSuchAlgorithmException {
-        SecureRandom secRandom = SecureRandom.getInstance("SHA1PRNG");
-        return secureRandInt(min, max, ignore, secRandom);
+    public static int secureRandInt(int min, int max, List<Integer> ignore) {
+        return secureRandInt(min, max, ignore, buildSecureRandom());
 
     }
 
@@ -86,62 +81,38 @@ public class RandomUtil {
 
     }
 
-    public static List<Integer> secureRandIntList(int min, int max, boolean unique) throws NoSuchAlgorithmException {
+    public static List<Integer> secureRandIntList(int min, int max, boolean unique) {
         List<Integer> randomList = new ArrayList<>(max - min + 1);
-        SecureRandom secRandom = SecureRandom.getInstance("SHA1PRNG");
+        SecureRandom secRandom = buildSecureRandom();
         IntStream.rangeClosed(min, max).forEach(index -> {
             randomList.add(secureRandInt(min, max, randomList, secRandom));
         });
         return randomList;
     }
-
-    public static int mersenneRandInt() throws SeedException {
-        SeedGenerator seedGenerator = DefaultSeedGenerator.getInstance();
-        return mersenneRandInt(seedGenerator);
-    }
-
-    public static int mersenneRandInt(SeedGenerator seedGenerator) throws SeedException {
-        MersenneTwisterRNG mersenneTwisterRNG = new MersenneTwisterRNG(seedGenerator);
-        return mersenneTwisterRNG.nextInt();
-    }
-
-    public static int mersenneRandInt(int min, int max) throws Exception {
-        NumberGenerator<Integer> generator = new DiscreteUniformGenerator(min, max,
-                new MersenneTwisterRNG());
-        return mersenneRandInt(min, max, generator);
-    }
     
-    public static int mersenneRandInt(int min, int max, List<Integer> ignore) throws Exception {
-        NumberGenerator<Integer> generator = new DiscreteUniformGenerator(min, max,
-                new MersenneTwisterRNG());
-        int value = mersenneRandInt(min, max, generator);
-        while(!ignore.isEmpty() && ignore.contains(value)) {
-            value = mersenneRandInt(min, max, generator);
-        }
-        return value;
-    }
-
-    public static int mersenneRandInt(int min, int max, NumberGenerator<Integer> numberGenerator) throws Exception {
-        return numberGenerator.nextValue();
-    }
-
-    public static List<Integer> mersenneRandIntList(int min, int max, boolean unique) throws Exception {
+    public static List<Integer> secureRandIntList(int min, int max, int sequenceLimit, boolean unique) {
         List<Integer> randomList = new ArrayList<>(max - min + 1);
-        for (int i = min; i <= max; i++) {
-            int genValue = mersenneRandInt(min, max);
-            while (unique && randomList.contains(genValue)) {
-                genValue = mersenneRandInt(min, max);
-            }
-            randomList.add(genValue);
-        }
-
+        SecureRandom secRandom = buildSecureRandom();
+        IntStream.range(0, sequenceLimit).forEach(index -> {
+            randomList.add(secureRandInt(min, max, randomList, secRandom));
+        });
         return randomList;
+    }
+
+    private static SecureRandom buildSecureRandom() {
+        SecureRandom secRandom;
+        try {
+            secRandom = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(RandomUtil.class.getName()).log(Level.SEVERE, null, ex);
+            secRandom = new SecureRandom();
+        }
+        return secRandom;
     }
 
 //    public static void main(String args[]) throws Exception {
 //        System.out.println(mersenneRandIntList(1, 75, true));
 //    }
-
     private RandomUtil() {
     }
 }
