@@ -4,7 +4,7 @@
  * in the propeties file. Entropy is supplied by a large sound file
  * possibly of white noise where bits are read at random.
  */
-package org.spauny.joy.sergent;
+package org.spauny.joy.sergent.impl.exp;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -46,19 +46,4 @@ public class RNG extends SecureRandom {
         return super.nextInt(i);
     }
 
-    public static void main(String[] args) {
-        try {
-            RNG rng = new RNG();
-//            int[] result = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            int size = 5;
-            long start = System.currentTimeMillis();
-            for (int i = 0; i < 74; i++) {
-                System.out.println(rng.nextInt(75));
-            }
-            long time = (System.currentTimeMillis() - start);
-            System.out.println("Time taken: " + time + "ms");
-        } catch (Exception e) {
-            System.out.println("I love java: " + e);
-        }
-    }
 }

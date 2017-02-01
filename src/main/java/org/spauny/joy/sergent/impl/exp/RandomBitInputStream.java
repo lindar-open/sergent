@@ -4,7 +4,7 @@
  * any byte being returned.  This should be very useful for seeding
  * PRNGs.
  */
-package org.spauny.joy.sergent;
+package org.spauny.joy.sergent.impl.exp;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -28,17 +28,17 @@ public class RandomBitInputStream extends RandomAccessFile {
      * We need a file for entropy - typically a large random.  We are
      * only interested in reading it so we set the mode to read only.
      */
-    public RandomBitInputStream(String fileName) throws IOException{
-	super(fileName, "r"); // read only
-	fileLength = (int)super.length();
+    public RandomBitInputStream(String fileName) throws IOException {
+        super(fileName, "r"); // read only
+        fileLength = (int) super.length();
     }
 
     /*
      * Reads a random byte from the file.
      */
-    private byte readRandomByte() throws IOException{
-	super.seek(rnd.nextInt(fileLength));
-	return super.readByte();
+    private byte readRandomByte() throws IOException {
+        super.seek(rnd.nextInt(fileLength));
+        return super.readByte();
     }
 
     /*
@@ -47,17 +47,17 @@ public class RandomBitInputStream extends RandomAccessFile {
      * Once a byte has been read the next byte is read from a random
      * position in the file.
      */
-    private boolean readRandomBit() throws IOException{
-	if (unusedBits <= 0) {
-	    currentByte = readRandomByte();
-	    unusedBits = BYTESIZE;
-	}
-	// is sign bit set?
-	boolean bit = (currentByte < 0);
-	// shift left by 1 to move next bit in
-	currentByte = (byte)(currentByte << 1);
-	unusedBits--;
-	return bit;
+    private boolean readRandomBit() throws IOException {
+        if (unusedBits <= 0) {
+            currentByte = readRandomByte();
+            unusedBits = BYTESIZE;
+        }
+        // is sign bit set?
+        boolean bit = (currentByte < 0);
+        // shift left by 1 to move next bit in
+        currentByte = (byte) (currentByte << 1);
+        unusedBits--;
+        return bit;
     }
 
     /*
@@ -71,19 +71,19 @@ public class RandomBitInputStream extends RandomAccessFile {
      * this condition was fulfilled it would be unlikely that the source file
      * is random.
      */
-    private boolean readSkewCorrectedRandomBit() throws IOException{
-	boolean skewCorrectedBit = true;
-	boolean done = false;
-	boolean[] bits = new boolean[2];
-	while(!done){
-	    bits[0] = readRandomBit();
-	    bits[1] = readRandomBit();
-	    if(bits[0] != bits[1]){
-		skewCorrectedBit = bits[rnd.nextInt(2)];
-		done = true;
-	    }
-	}
-	return skewCorrectedBit;
+    private boolean readSkewCorrectedRandomBit() throws IOException {
+        boolean skewCorrectedBit = true;
+        boolean done = false;
+        boolean[] bits = new boolean[2];
+        while (!done) {
+            bits[0] = readRandomBit();
+            bits[1] = readRandomBit();
+            if (bits[0] != bits[1]) {
+                skewCorrectedBit = bits[rnd.nextInt(2)];
+                done = true;
+            }
+        }
+        return skewCorrectedBit;
     }
 
     /*
@@ -91,17 +91,17 @@ public class RandomBitInputStream extends RandomAccessFile {
      * Because the bits are not skewed there should be an equal
      * chance of any byte value being returned.
      */
-    public byte readSkewCorrectedRandomByte() throws IOException{
-	byte skewCorrectedRandomByte = 0;
-	for(int i=0; i<BYTESIZE; i++){
-	    boolean bit = readSkewCorrectedRandomBit();
-	    // shift left by 1 to move next bit in
-	    skewCorrectedRandomByte = (byte)(skewCorrectedRandomByte << 1);
-	    if(bit) { // set low bit
-                skewCorrectedRandomByte = (byte)(skewCorrectedRandomByte | ONEMASK);
+    public byte readSkewCorrectedRandomByte() throws IOException {
+        byte skewCorrectedRandomByte = 0;
+        for (int i = 0; i < BYTESIZE; i++) {
+            boolean bit = readSkewCorrectedRandomBit();
+            // shift left by 1 to move next bit in
+            skewCorrectedRandomByte = (byte) (skewCorrectedRandomByte << 1);
+            if (bit) { // set low bit
+                skewCorrectedRandomByte = (byte) (skewCorrectedRandomByte | ONEMASK);
             }
-	}
-	return skewCorrectedRandomByte;
+        }
+        return skewCorrectedRandomByte;
     }
 
     /*
@@ -109,23 +109,23 @@ public class RandomBitInputStream extends RandomAccessFile {
      * a 0 or a 1.
      */
     private static void testUnskewedBits(String file, int size)
-	throws IOException{
+            throws IOException {
 
         try (RandomBitInputStream rbis = new RandomBitInputStream(file)) {
             double bits = 0;
             double unskewedBits = 0;
-            for(int i=0; i<size; i++){
+            for (int i = 0; i < size; i++) {
                 boolean bit = rbis.readRandomBit();
-                if(bit) {
+                if (bit) {
                     bits++;
                 }
                 boolean unskewedBit = rbis.readSkewCorrectedRandomBit();
-                if(unskewedBit) {
+                if (unskewedBit) {
                     unskewedBits++;
                 }
             }
-            System.out.println("% +ve skewed   bits\t"+bits/size*100+
-                    "\n% +ve unskewed bits\t"+unskewedBits/size*100);
+            System.out.println("% +ve skewed   bits\t" + bits / size * 100
+                    + "\n% +ve unskewed bits\t" + unskewedBits / size * 100);
         }
     }
 
@@ -134,35 +134,20 @@ public class RandomBitInputStream extends RandomAccessFile {
      * any byte value.
      */
     private static void testUnskewedBytes(String file, int size)
-	throws IOException{
+            throws IOException {
         try (RandomBitInputStream rbis = new RandomBitInputStream(file)) {
             double[] bytes = new double[256];
             double[] unskewedBytes = new double[256];
-            for(int i=0; i<size; i++){
-                bytes[rbis.readRandomByte()+128]++;
-                unskewedBytes[rbis.readSkewCorrectedRandomByte()+128]++;
+            for (int i = 0; i < size; i++) {
+                bytes[rbis.readRandomByte() + 128]++;
+                unskewedBytes[rbis.readSkewCorrectedRandomByte() + 128]++;
             }
             System.out.println("BYTE#, NORMAL, %UNSKEWED");
-            for(int i=0; i<bytes.length; i++) {
-                System.out.println(i-128 +", "+bytes[i]/size+", "+
-                        unskewedBytes[i]/size);
+            for (int i = 0; i < bytes.length; i++) {
+                System.out.println(i - 128 + ", " + bytes[i] / size + ", "
+                        + unskewedBytes[i] / size);
             }
         }
     }
 
-    public static void main(String[] args){
-	if (args.length != 1){
-	    System.out.println("Usage: java RandomBitInputStream 1000000 :where 1000000 is the number of iterations to test");
-	    return;
-	}
-	try {
-	    String file = "C:\\mark\\random";
-	    int size = Integer.parseInt(args[0]);
-	    // delete / uncomment following lines as appropriate
-	    //testUnskewedBits(file, size);
-	    testUnskewedBytes(file, size);
-	} catch(NumberFormatException | IOException e){
-	    System.out.println("I hate java: "+e);
-	}
-    }
 }

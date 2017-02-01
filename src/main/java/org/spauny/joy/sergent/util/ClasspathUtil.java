@@ -12,8 +12,8 @@ public class ClasspathUtil {
         ClassLoader classLoader = ClasspathUtil.class.getClassLoader();
 	return new File(classLoader.getResource(fileName).getFile());
     }
-    
-    public static void main (String args[]) {
-        System.out.println(ClasspathUtil.getFileFromResources("soundfile.aiff").getName());
+
+    private ClasspathUtil() {
     }
+    
 }
