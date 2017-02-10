@@ -24,6 +24,14 @@ public class Sergent {
         this.generator = randomGenerator;
     }
 
+    public long randLong() {
+        return randLong(0, Long.MAX_VALUE);
+    }
+
+    public long randLong(long min, long max) {
+        return generator.nextLong((max - min) + 1) + min;
+    }
+
     public int randInt() {
         return randInt(0, Integer.MAX_VALUE, new ArrayList<>(0));
     }
@@ -54,6 +62,16 @@ public class Sergent {
 
     }
 
+    /**
+     * This method generates a unique (no duplicates) random integer list starting from 1 to [max]
+     *
+     * @param max
+     * @return
+     */
+    public List<Integer> uniformSequence(int max) {
+        return randIntList(new SequenceProps().min(1).max(max).size(max).unique(true));
+    }
+
     public List<Integer> randIntList(int min, int max, int listSize, boolean unique) {
         return randIntList(new SequenceProps().min(min).max(max).size(listSize).unique(unique));
     }
@@ -78,11 +96,13 @@ public class Sergent {
     }
 
 //    public static void main(String[] args) {
-//        Sergent rng = SergentFactory.getISAACInstance();
+//        Sergent rng = SergentFactory.getInstance();
 //
 //        long start = System.currentTimeMillis();
 //
-//        rng.randIntList(1, 75, 10_000_000, false);
+////        rng.randIntList(1, 75, 10_000_000, false);
+//        List<Integer> seq = rng.uniformSequence(10);
+//        System.out.println("seq: " + seq);
 //
 //        long time = (System.currentTimeMillis() - start);
 //

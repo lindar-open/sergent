@@ -14,4 +14,9 @@ public class SecureGenerator extends SecureRandom implements RandomGenerator {
         super(seed);
     }
 
+    @Override
+    public long nextLong(long bound) {
+        throw new UnsupportedOperationException("Next long with bound is not supported by SecureRandom");
+    }
+
 }

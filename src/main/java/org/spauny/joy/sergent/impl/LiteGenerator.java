@@ -14,4 +14,9 @@ public class LiteGenerator extends Random implements RandomGenerator {
         super(seed);
     }
 
+    @Override
+    public long nextLong(long bound) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }
