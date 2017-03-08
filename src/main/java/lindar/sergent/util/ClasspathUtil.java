@@ -1,4 +1,4 @@
-package org.spauny.joy.sergent.util;
+package lindar.sergent.util;
 
 import java.io.File;
 

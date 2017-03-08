@@ -1,4 +1,4 @@
-package org.spauny.joy.sergent.impl.exp;
+package lindar.sergent.impl.exp;
 
 /**
  *
@@ -7,8 +7,8 @@ package org.spauny.joy.sergent.impl.exp;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import lombok.extern.slf4j.Slf4j;
-import org.spauny.joy.sergent.Sergent;
-import org.spauny.joy.sergent.util.ClasspathUtil;
+import lindar.sergent.Sergent;
+import lindar.sergent.util.ClasspathUtil;
 
 @Slf4j
 public class Seed {

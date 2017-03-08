@@ -4,7 +4,7 @@
  * in the propeties file. Entropy is supplied by a large sound file
  * possibly of white noise where bits are read at random.
  */
-package org.spauny.joy.sergent.impl.exp;
+package lindar.sergent.impl.exp;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;

@@ -4,7 +4,7 @@
  * any byte being returned.  This should be very useful for seeding
  * PRNGs.
  */
-package org.spauny.joy.sergent.impl.exp;
+package lindar.sergent.impl.exp;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;

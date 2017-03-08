@@ -1,6 +1,6 @@
-package org.spauny.joy.sergent.impl;
+package lindar.sergent.impl;
 
-import org.spauny.joy.sergent.Sergent;
+import lindar.sergent.Sergent;
 
 public final class SergentFactory {
     

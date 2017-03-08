@@ -1,4 +1,4 @@
-package org.spauny.joy.sergent.impl;
+package lindar.sergent.impl;
 
 import java.util.Random;
 

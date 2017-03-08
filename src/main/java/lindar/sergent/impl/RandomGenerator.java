@@ -1,4 +1,4 @@
-package org.spauny.joy.sergent.impl;
+package lindar.sergent.impl;
 
 public interface RandomGenerator {
     int nextInt();

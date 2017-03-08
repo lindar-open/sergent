@@ -1,13 +1,13 @@
-package org.spauny.joy.sergent;
+package lindar.sergent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.ArrayUtils;
-import org.spauny.joy.sergent.impl.LiteGenerator;
-import org.spauny.joy.sergent.impl.RandomGenerator;
-import org.spauny.joy.sergent.impl.SergentFactory;
-import org.spauny.joy.sergent.util.SequenceProps;
+import lindar.sergent.impl.LiteGenerator;
+import lindar.sergent.impl.RandomGenerator;
+import lindar.sergent.impl.SergentFactory;
+import lindar.sergent.util.SequenceProps;
 
 public class Sergent {
 
