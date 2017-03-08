@@ -11,7 +11,7 @@ public final class SergentFactory {
      * @return
      */
     public static Sergent getInstance() {
-        return new Sergent(new SecureGenerator());
+        return new Sergent(new MersenneGenerator());
     }
     
     /**
@@ -22,9 +22,7 @@ public final class SergentFactory {
      * @return
      */
     public static Sergent getInstance(long seed) {
-        SecureGenerator secureGenerator = new SecureGenerator();
-        secureGenerator.setSeed(seed);
-        return new Sergent(secureGenerator);
+        return new Sergent(new MersenneGenerator(seed));
     }
     
     /**

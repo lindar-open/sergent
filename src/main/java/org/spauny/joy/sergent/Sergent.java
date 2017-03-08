@@ -6,15 +6,16 @@ import java.util.stream.IntStream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.spauny.joy.sergent.impl.LiteGenerator;
 import org.spauny.joy.sergent.impl.RandomGenerator;
+import org.spauny.joy.sergent.impl.SergentFactory;
 import org.spauny.joy.sergent.util.SequenceProps;
 
 public class Sergent {
 
-    private RandomGenerator generator;
+    private final RandomGenerator generator;
 
     /**
-     * Returns an instance of java.util.Random. For more random generator implementations use SergentFactory to
-     * initialise Sergent! NOTE: Do not use for anything sensitive!
+     * Returns an instance of java.util.Random. 
+     * For more random generator implementations use SergentFactory to initialise Sergent!
      */
     public Sergent() {
         this.generator = new LiteGenerator();
@@ -95,18 +96,18 @@ public class Sergent {
         return randomList;
     }
 
-//    public static void main(String[] args) {
-//        Sergent rng = SergentFactory.getInstance();
-//
-//        long start = System.currentTimeMillis();
-//
-////        rng.randIntList(1, 75, 10_000_000, false);
-//        List<Integer> seq = rng.uniformSequence(10);
+    public static void main(String[] args) {
+        Sergent rng = SergentFactory.getInstance();
+
+        long start = System.currentTimeMillis();
+
+//        rng.randIntList(1, 75, 10_000_000, false);
+        List<Integer> seq = rng.uniformSequence(10_000);
 //        System.out.println("seq: " + seq);
-//
-//        long time = (System.currentTimeMillis() - start);
-//
-//        System.out.println("Time taken: " + time + "ms");
-//    }
+
+        long time = (System.currentTimeMillis() - start);
+
+        System.out.println("Time taken: " + time + "ms");
+    }
 
 }
