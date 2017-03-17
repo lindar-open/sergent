@@ -1,4 +1,4 @@
-package lindar.sergent.impl;
+package com.lindar.sergent.impl;
 
 import org.apache.commons.math3.random.MersenneTwister;
 

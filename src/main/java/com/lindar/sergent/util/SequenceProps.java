@@ -1,4 +1,4 @@
-package lindar.sergent.util;
+package com.lindar.sergent.util;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

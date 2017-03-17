@@ -1,4 +1,4 @@
-package lindar.sergent.impl;
+package com.lindar.sergent.impl;
 
 public interface RandomGenerator {
     int nextInt();

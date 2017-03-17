@@ -1,6 +1,6 @@
-package lindar.sergent.impl;
+package com.lindar.sergent.impl;
 
-import lindar.sergent.Sergent;
+import com.lindar.sergent.Sergent;
 
 public final class SergentFactory {
     

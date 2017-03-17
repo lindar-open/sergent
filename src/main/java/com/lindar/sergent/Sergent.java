@@ -1,13 +1,13 @@
-package lindar.sergent;
+package com.lindar.sergent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.ArrayUtils;
-import lindar.sergent.impl.LiteGenerator;
-import lindar.sergent.impl.RandomGenerator;
-import lindar.sergent.impl.SergentFactory;
-import lindar.sergent.util.SequenceProps;
+import com.lindar.sergent.impl.LiteGenerator;
+import com.lindar.sergent.impl.RandomGenerator;
+import com.lindar.sergent.impl.SergentFactory;
+import com.lindar.sergent.util.SequenceProps;
 
 public class Sergent {
 
