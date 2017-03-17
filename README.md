@@ -17,3 +17,13 @@ List<Integer> fiveUniqueRandNumbersFromZeroToTenWithProps = rng.randIntList(new 
 // a unique (no duplicates) random integer list starting from 1 to [max]
 List<Integer> uniqueSequence = rng.uniformSequence(10_000);
 ```
+
+Usage: 
+
+```xml
+<dependency>
+    <groupId>com.lindar</groupId>
+    <artifactId>sergent</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
