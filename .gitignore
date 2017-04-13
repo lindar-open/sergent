@@ -12,3 +12,5 @@
 hs_err_pid*
 /target/
 nbactions.xml
+sergent.iml
+.idea

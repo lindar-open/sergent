@@ -6,23 +6,23 @@ public final class SergentFactory {
     
     /**
      * Return the strongest instance of a random generator available. 
-     * At the moment it will return an instance of java.security.SecureRandom but the implementation may change. 
-     * If you want a guaranteed java.security.SecureRandom every time, use getSecureInstance method.
+     * At the moment it will return an instance of org.apache.commons.math3.random.ISAACRandom but the implementation may change.
+     * If you want a guaranteed org.apache.commons.math3.random.ISAACRandom every time, use getISAACInstance method.
      * @return
      */
     public static Sergent getInstance() {
-        return new Sergent(new MersenneGenerator());
+        return new Sergent(new ISAACGenerator());
     }
     
     /**
      * Return the strongest instance of a random generator available. 
-     * At the moment it will return an instance of java.security.SecureRandom but the implementation may change. 
-     * If you want a guaranteed java.security.SecureRandom every time, use getSecureInstance method.
+     * At the moment it will return an instance of org.apache.commons.math3.random.ISAACRandom but the implementation may change.
+     * If you want a guaranteed org.apache.commons.math3.random.ISAACRandom every time, use getISAACInstance method.
      * @param seed
      * @return
      */
     public static Sergent getInstance(long seed) {
-        return new Sergent(new MersenneGenerator(seed));
+        return new Sergent(new ISAACGenerator(seed));
     }
     
     /**
