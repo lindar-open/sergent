@@ -63,6 +63,31 @@ public class Sergent {
     }
 
     /**
+     * Shuffle the entries of the given list, using the Fisher–Yates algorithm and the random generator implementation chosen
+     */
+    public List<Integer> shuffleList(List<Integer> numbers) {
+        int[] numbersArray = numbers.stream().mapToInt(i->i).toArray();
+        MathArrays.shuffle(numbersArray, this.generator);
+        return Arrays.stream(numbersArray).boxed().collect(Collectors.toList());
+    }
+
+    /**
+     * Shuffle the entries of the given array, using the Fisher–Yates algorithm and the random generator implementation chosen
+     */
+    public void shuffleArray(int[] numbers) {
+        MathArrays.shuffle(numbers, this.generator);
+    }
+
+    /**
+     * Shuffle the entries of the given array, using the Fisher–Yates algorithm and the random generator implementation chosen.
+     * Returns a list of shuffled numbers from given array
+     */
+    public List<Integer> shuffleArrayToList(int[] numbers) {
+        MathArrays.shuffle(numbers, this.generator);
+        return Arrays.stream(numbers).boxed().collect(Collectors.toList());
+    }
+
+    /**
      * This method generates a unique (no duplicates) random integer list starting from 1 to [max] (step=1)
      */
     public List<Integer> uniformSequence(int max) {
