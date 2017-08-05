@@ -7,7 +7,7 @@ import org.apache.commons.text.RandomStringGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
-class StringGenerator {
+public class StringGenerator {
 
     private final UniformRandomProvider randomProvider;
 

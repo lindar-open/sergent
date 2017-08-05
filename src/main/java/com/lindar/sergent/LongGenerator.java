@@ -6,7 +6,7 @@ import org.apache.commons.rng.UniformRandomProvider;
 import java.util.List;
 import java.util.function.LongSupplier;
 
-class LongGenerator {
+public class LongGenerator {
 
     private final UniformRandomProvider randomProvider;
 

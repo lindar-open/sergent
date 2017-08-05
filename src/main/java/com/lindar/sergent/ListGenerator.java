@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-class ListGenerator {
+public class ListGenerator {
 
     private final IntGenerator intGenerator;
     private final Shuffler shuffler;

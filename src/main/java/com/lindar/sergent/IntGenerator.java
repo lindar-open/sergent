@@ -6,7 +6,7 @@ import org.apache.commons.rng.UniformRandomProvider;
 import java.util.List;
 import java.util.function.IntSupplier;
 
-class IntGenerator {
+public class IntGenerator {
 
     private final UniformRandomProvider randomProvider;
 
