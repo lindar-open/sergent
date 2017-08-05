@@ -1,6 +1,8 @@
-package com.lindar.sergent.impl;
+package com.lindar.sergent;
 
-import com.lindar.sergent.Sergent;
+import org.apache.commons.math3.random.ISAACRandom;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.Well19937c;
 
 public final class SergentFactory {
     
@@ -8,10 +10,9 @@ public final class SergentFactory {
      * Return the strongest instance of a random generator available. 
      * At the moment it will return an instance of org.apache.commons.math3.random.ISAACRandom but the implementation may change.
      * If you want a guaranteed org.apache.commons.math3.random.ISAACRandom every time, use getISAACInstance method.
-     * @return
      */
     public static Sergent getInstance() {
-        return new Sergent(new ISAACGenerator());
+        return new Sergent(new ISAACRandom());
     }
     
     /**
@@ -19,82 +20,56 @@ public final class SergentFactory {
      * At the moment it will return an instance of org.apache.commons.math3.random.ISAACRandom but the implementation may change.
      * If you want a guaranteed org.apache.commons.math3.random.ISAACRandom every time, use getISAACInstance method.
      * @param seed
-     * @return
      */
     public static Sergent getInstance(long seed) {
-        return new Sergent(new ISAACGenerator(seed));
-    }
-    
-    /**
-     * Returns an instance of java.util.Random. 
-     * @return
-     */
-    public static Sergent getLiteInstance() {
-        return new Sergent(new LiteGenerator());
-    }
-    
-    /**
-     * Returns an instance of java.util.Random. 
-     * @param seed
-     * @return
-     */
-    public static Sergent getLiteInstance(long seed) {
-        return new Sergent(new LiteGenerator(seed));
-    }
-    
-    /**
-     * Returns an instance of java.security.SecureRandom. 
-     * @return
-     */
-    public static Sergent getSecureInstance() {
-        return new Sergent(new SecureGenerator());
-    }
-    
-    /**
-     * Returns an instance of java.security.SecureRandom. 
-     * @param seed
-     * @return
-     */
-    public static Sergent getSecureInstance(long seed) {
-        SecureGenerator secureGenerator = new SecureGenerator();
-        secureGenerator.setSeed(seed);
-        return new Sergent(secureGenerator);
+        return new Sergent(new ISAACRandom(seed));
     }
     
     /**
      * Returns an instance of org.apache.commons.math3.random.MersenneTwister.
      * The instance is initialized using the current time plus the system identity hash code of this instance as the seed
-     * @return
      */
     public static Sergent getMersenneInstance() {
-        return new Sergent(new MersenneGenerator());
+        return new Sergent(new MersenneTwister());
     }
     
     /**
      * Returns an instance of org.apache.commons.math3.random.MersenneTwister.
      * @param seed
-     * @return
      */
     public static Sergent getMersenneInstance(long seed) {
-        return new Sergent(new MersenneGenerator(seed));
+        return new Sergent(new MersenneTwister(seed));
     }
     
     /**
      * Returns an instance of org.apache.commons.math3.random.ISAACRandom.
      * The instance is initialized using the current time plus the system identity hash code of this instance as the seed
-     * @return
      */
     public static Sergent getISAACInstance() {
-        return new Sergent(new ISAACGenerator());
+        return new Sergent(new ISAACRandom());
     }
     
     /**
      * Returns an instance of org.apache.commons.math3.random.ISAACRandom.
      * @param seed
-     * @return
      */
     public static Sergent getISAACInstance(long seed) {
-        return new Sergent(new ISAACGenerator(seed));
+        return new Sergent(new ISAACRandom(seed));
+    }
+
+    /**
+     * Returns an instance of org.apache.commons.math3.random.Well19937c.
+     * The instance is initialized using the current time as seed
+     */
+    public static Sergent getWell19937cInstance() {
+        return new Sergent(new Well19937c());
+    }
+
+    /**
+     * Returns an instance of org.apache.commons.math3.random.Well19937c.
+     */
+    public static Sergent getWell19937cInstance(long seed) {
+        return new Sergent(new Well19937c(seed));
     }
 
     private SergentFactory() {

@@ -1,13 +1,16 @@
 package com.lindar.sergent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-import org.apache.commons.lang3.ArrayUtils;
-import com.lindar.sergent.impl.LiteGenerator;
-import com.lindar.sergent.impl.RandomGenerator;
-import com.lindar.sergent.impl.SergentFactory;
 import com.lindar.sergent.util.SequenceProps;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.MathArrays;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Sergent {
 
@@ -18,7 +21,7 @@ public class Sergent {
      * For more random generator implementations use SergentFactory to initialise Sergent!
      */
     public Sergent() {
-        this.generator = new LiteGenerator();
+        this.generator = new MersenneTwister();
     }
 
     public Sergent(RandomGenerator randomGenerator) {
@@ -26,11 +29,7 @@ public class Sergent {
     }
 
     public long randLong() {
-        return randLong(0, Long.MAX_VALUE);
-    }
-
-    public long randLong(long min, long max) {
-        return generator.nextLong((max - min) + 1) + min;
+        return generator.nextLong();
     }
 
     public int randInt() {
@@ -64,19 +63,42 @@ public class Sergent {
     }
 
     /**
-     * This method generates a unique (no duplicates) random integer list starting from 1 to [max]
-     *
-     * @param max
-     * @return
+     * This method generates a unique (no duplicates) random integer list starting from 1 to [max] (step=1)
      */
     public List<Integer> uniformSequence(int max) {
-        return randIntList(new SequenceProps().min(1).max(max).size(max).unique(true));
+        return uniformSequence(1, max);
     }
 
+    /**
+     * This method generates a unique (no duplicates) random integer list starting from 0 to [max] (step=1)
+     */
+    public List<Integer> uniformSequenceFrom0(int max) {
+        return uniformSequence(0, max);
+    }
+
+    /**
+     * This method generates a unique (no duplicates) random integer list starting from min to [max] (step=1)
+     */
+    public List<Integer> uniformSequence(int min, int max) {
+        int[] numbers = IntStream.rangeClosed(min, max).toArray();
+        MathArrays.shuffle(numbers, this.generator);
+        return Arrays.stream(numbers).boxed().collect(Collectors.toList());
+    }
+
+    /**
+     * This method generates a random list of integers between min and max. <br/>
+     * NOTE: If listSize = max-min there is no guarantee the returned list is uniform (every integer number between min and max) <br/>
+     * Use {Sergent#uniformSequence} if the listSize = max-min
+     */
     public List<Integer> randIntList(int min, int max, int listSize, boolean unique) {
         return randIntList(new SequenceProps().min(min).max(max).size(listSize).unique(unique));
     }
 
+    /**
+     * This method generates a random list of integers between min and max. <br/>
+     * NOTE: If list size = max-min there is no guarantee the returned list is uniform (every integer number between min and max) <br/>
+     * Use {Sergent#uniformSequence} if the list size = max-min
+     */
     public List<Integer> randIntList(SequenceProps sequenceProps) {
         int size = sequenceProps.size();
         int min = sequenceProps.min();
@@ -93,6 +115,7 @@ public class Sergent {
             }
             randomList.add(randInt);
         });
+
         return randomList;
     }
 
