@@ -42,8 +42,6 @@ public class LongGenerator {
     }
 
     public long randLong() {
-        long randLong = 0;
-
         LongSupplier randomValueSupplier;
         if (min > 0 && max > 0) {
             randomValueSupplier = () -> (randomProvider.nextLong((max - min) + 1) + min);
@@ -53,9 +51,10 @@ public class LongGenerator {
             randomValueSupplier = randomProvider::nextLong;
         }
 
-        while (shouldRejectValue(randLong)) {
+        long randLong;
+        do {
             randLong = randomValueSupplier.getAsLong();
-        }
+        } while (shouldRejectValue(randLong));
 
         return randLong;
     }

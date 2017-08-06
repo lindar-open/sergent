@@ -42,8 +42,6 @@ public class IntGenerator {
     }
 
     public int randInt() {
-        int randInt = 0;
-
         IntSupplier randomValueSupplier;
         if (min > 0 && max > 0) {
             randomValueSupplier = () -> (randomProvider.nextInt((max - min) + 1) + min);
@@ -53,9 +51,10 @@ public class IntGenerator {
             randomValueSupplier = randomProvider::nextInt;
         }
 
-        while (shouldRejectValue(randInt)) {
+        int randInt;
+        do {
             randInt = randomValueSupplier.getAsInt();
-        }
+        } while (shouldRejectValue(randInt));
 
         return randInt;
     }
