@@ -20,7 +20,10 @@ public class StringGenerator {
     private int minCodePoint;
     private int maxCodePoint;
 
-    private List<CharacterPredicate> predicates = new ArrayList<>();
+    private boolean alphabetic;
+    private boolean numeric;
+    private boolean lowercase;
+    private boolean uppercase;
 
     public StringGenerator length(int length) {
         this.length = length;
@@ -34,22 +37,51 @@ public class StringGenerator {
     }
 
     public StringGenerator alphabetic() {
-        predicates.add(c -> (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
+        this.alphabetic = true;
+        return this;
+    }
+
+    public StringGenerator lowercase() {
+        this.lowercase = true;
+        return this;
+    }
+
+    public StringGenerator uppercase() {
+        this.uppercase = true;
         return this;
     }
 
     public StringGenerator alphanumeric() {
-        predicates.add(c -> (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
-        predicates.add(c -> (c >= '1' && c <= '9'));
+        this.alphabetic = true;
+        this.numeric = true;
         return this;
     }
 
     public StringGenerator numeric() {
-        predicates.add(c -> (c >= '1' && c <= '9'));
+        this.numeric = true;
         return this;
     }
 
     public String randString() {
+        List<CharacterPredicate> predicates = new ArrayList<>();
+
+        CharacterPredicate uppercasePred = c -> (c >= 'A' && c <= 'Z');
+        CharacterPredicate lowercasePred = c -> (c >= 'a' && c <= 'z');
+        CharacterPredicate numericPred = c -> (c >= '1' && c <= '9');
+
+        if (alphabetic || lowercase || uppercase) {
+            if (lowercase) predicates.add(lowercasePred);
+            if (uppercase) predicates.add(uppercasePred);
+            if (!lowercase && !uppercase) {
+                predicates.add(lowercasePred);
+                predicates.add(uppercasePred);
+            }
+        }
+
+        if (numeric) {
+            predicates.add(numericPred);
+        }
+
         RandomStringGenerator.Builder builder = new RandomStringGenerator.Builder().usingRandom(randomProvider::nextInt);
         if (minCodePoint > 0 && maxCodePoint > 0) {
             builder.withinRange(minCodePoint, maxCodePoint);
@@ -60,3 +92,5 @@ public class StringGenerator {
         return builder.build().generate(length);
     }
 }
+
+
