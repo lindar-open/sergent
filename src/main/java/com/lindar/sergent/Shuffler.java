@@ -1,6 +1,5 @@
 package com.lindar.sergent;
 
-import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.sampling.ListSampler;
 import org.apache.commons.rng.sampling.PermutationSampler;
 
@@ -10,22 +9,23 @@ import java.util.stream.Collectors;
 
 public class Shuffler {
 
-    private final UniformRandomProvider randomProvider;
-
-    Shuffler(UniformRandomProvider randomProvider) {
-        this.randomProvider = randomProvider;
-    }
-
     private int start = 0;
     private boolean towardHead = false;
+
+    Shuffler(int start, boolean towardHead) {
+        this.start = start;
+        this.towardHead = towardHead;
+    }
+
+    public Shuffler() {
+    }
 
     /**
      * If towardHead = false (default) it will shuffle all elements from this start index to end of list (right side),
      * otherwise it will shuffle the left side from the start index. Default index is 0
      */
     public Shuffler start(int start) {
-        this.start = start;
-        return this;
+        return buildCopy().start(start).build();
     }
 
     /**
@@ -33,8 +33,7 @@ public class Shuffler {
      * otherwise it will shuffle the left side from the start index. Default index is 0
      */
     public Shuffler towardHead() {
-        this.towardHead = true;
-        return this;
+        return buildCopy().towardHead(true).build();
     }
 
     /**
@@ -42,8 +41,7 @@ public class Shuffler {
      * otherwise it will shuffle the left side from the start index. Default index is 0
      */
     public Shuffler towardTail() {
-        this.towardHead = false;
-        return this;
+        return buildCopy().towardHead(false).build();
     }
 
 
@@ -51,14 +49,14 @@ public class Shuffler {
      * Shuffle the entries of the given list, using the Fisher–Yates algorithm and the randomProvider chosen
      */
     public <T> void list(List<T> list) {
-        ListSampler.shuffle(this.randomProvider, list, start, towardHead);
+        ListSampler.shuffle(RandomProviderFactory.getInstance(), list, start, towardHead);
     }
 
     /**
      * Shuffle the entries of the given array, using the Fisher–Yates algorithm and the randomProvider chosen
      */
     public void array(int[] numbers) {
-        PermutationSampler.shuffle(this.randomProvider, numbers, start, towardHead);
+        PermutationSampler.shuffle(RandomProviderFactory.getInstance(), numbers, start, towardHead);
     }
 
     /**
@@ -66,7 +64,33 @@ public class Shuffler {
      * Returns a list of shuffled numbers from given array
      */
     public List<Integer> arrayToList(int[] numbers) {
-        PermutationSampler.shuffle(this.randomProvider, numbers, start, towardHead);
+        PermutationSampler.shuffle(RandomProviderFactory.getInstance(), numbers, start, towardHead);
         return Arrays.stream(numbers).boxed().collect(Collectors.toList());
+    }
+
+    private ShufflerBuilder buildCopy() {
+        return new ShufflerBuilder().start(this.start).towardHead(this.towardHead);
+    }
+
+    static class ShufflerBuilder {
+        private int start;
+        private boolean towardHead;
+
+        ShufflerBuilder() {
+        }
+
+        Shuffler.ShufflerBuilder start(int start) {
+            this.start = start;
+            return this;
+        }
+
+        Shuffler.ShufflerBuilder towardHead(boolean towardHead) {
+            this.towardHead = towardHead;
+            return this;
+        }
+
+        Shuffler build() {
+            return new Shuffler(start, towardHead);
+        }
     }
 }

@@ -3,45 +3,50 @@ package com.lindar.sergent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.rng.UniformRandomProvider;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.IntSupplier;
 
 public class IntGenerator {
-
-    private final UniformRandomProvider randomProvider;
-
-    IntGenerator(UniformRandomProvider randomProvider) {
-        this.randomProvider = randomProvider;
-    }
 
     private int min;
     private int max;
     private List<Integer> ignoreList;
     private int[] ignoreArray;
 
+    IntGenerator(int min, int max, List<Integer> ignoreList, int[] ignoreArray) {
+        this.min = min;
+        this.max = max;
+        this.ignoreList = ignoreList;
+        this.ignoreArray = ignoreArray;
+    }
+
+    public IntGenerator() {
+    }
+
     public IntGenerator withMinAndMax(int min, int max) {
         if (min <= 0) throw new IllegalArgumentException("Min has to be positive and greater than 0. Use the withMax method when you want min = 0");
-        this.min = min;
-        return withMax(max);
+        if (max <= 0) throw new IllegalArgumentException("Max has to be positive and greater than 0");
+        return buildCopy().min(min).max(max).build();
     }
 
     public IntGenerator withMax(int max) {
         if (max <= 0) throw new IllegalArgumentException("Max has to be positive and greater than 0");
-        this.max = max;
-        return this;
+        return buildCopy().max(max).build();
     }
 
     public IntGenerator ignore(int... ignore) {
-        this.ignoreArray = ignore;
-        return this;
+        return buildCopy().ignoreArray(ignore).build();
     }
 
     public IntGenerator ignore(List<Integer> ignore) {
-        this.ignoreList = ignore;
-        return this;
+        return buildCopy().ignoreList(ignore).build();
     }
 
     public int randInt() {
+        UniformRandomProvider randomProvider = RandomProviderFactory.getInstance();
+
         IntSupplier randomValueSupplier;
         if (min > 0 && max > 0) {
             randomValueSupplier = () -> (randomProvider.nextInt((max - min) + 1) + min);
@@ -65,5 +70,69 @@ public class IntGenerator {
             reject = true;
         }
         return reject || (ignoreArray != null && ArrayUtils.contains(ignoreArray, value));
+    }
+
+    private IntGeneratorBuilder buildCopy() {
+        IntGeneratorBuilder generatorBuilder = new IntGeneratorBuilder().min(this.min).max(this.max);
+        if (this.ignoreList != null) {
+            generatorBuilder.ignoreList(new ArrayList<>(this.ignoreList));
+        }
+
+        if (this.ignoreArray != null) {
+            generatorBuilder.ignoreArray(this.ignoreArray.clone());
+        }
+        return generatorBuilder;
+    }
+
+    public int getMin() {
+        return this.min;
+    }
+
+    public int getMax() {
+        return this.max;
+    }
+
+    static class IntGeneratorBuilder {
+        private int min;
+        private int max;
+        private List<Integer> ignoreList;
+        private int[] ignoreArray;
+
+        IntGeneratorBuilder() {
+        }
+
+        IntGenerator.IntGeneratorBuilder min(int min) {
+            this.min = min;
+            return this;
+        }
+
+        IntGenerator.IntGeneratorBuilder max(int max) {
+            this.max = max;
+            return this;
+        }
+
+        IntGenerator.IntGeneratorBuilder ignoreList(List<Integer> ignoreList) {
+            this.ignoreList = ignoreList;
+            return this;
+        }
+
+        IntGenerator.IntGeneratorBuilder ignoreArray(int[] ignoreArray) {
+            this.ignoreArray = ignoreArray;
+            return this;
+        }
+
+        IntGenerator build() {
+            return new IntGenerator(min, max, ignoreList, ignoreArray);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "IntGenerator{" +
+                "min=" + min +
+                ", max=" + max +
+                ", ignoreList=" + ignoreList +
+                ", ignoreArray=" + Arrays.toString(ignoreArray) +
+                '}';
     }
 }
