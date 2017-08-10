@@ -71,7 +71,52 @@ public class StringGenerator {
         RandomStringGenerator.Builder builder = new RandomStringGenerator.Builder().usingRandom(randomProvider::nextInt);
         if (minCodePoint > 0 && maxCodePoint > 0) {
             builder.withinRange(minCodePoint, maxCodePoint);
+        } else {
+            int minCodePoint = Integer.MAX_VALUE;
+            int maxCodePoint = Integer.MIN_VALUE;
+            if (numeric) {
+                if('1' < minCodePoint){
+                    minCodePoint = '1';
+                }
+
+                if('9' > maxCodePoint){
+                    maxCodePoint = '9';
+                }
+            }
+
+            if (alphabetic || lowercase || uppercase) {
+                if (lowercase) {
+                    if('a' < minCodePoint){
+                        minCodePoint = 'a';
+                    }
+
+                    if('z' > maxCodePoint){
+                        maxCodePoint = 'z';
+                    }
+                }
+                if (uppercase) {
+                    if('A' < minCodePoint){
+                        minCodePoint = 'A';
+                    }
+
+                    if('Z' > maxCodePoint){
+                        maxCodePoint = 'Z';
+                    }
+                }
+                if (!lowercase && !uppercase) {
+                    if('a' < minCodePoint){
+                        minCodePoint = 'a';
+                    }
+
+                    if('Z' > maxCodePoint){
+                        maxCodePoint = 'Z';
+                    }
+                }
+            }
+
+            builder.withinRange(minCodePoint, maxCodePoint);
         }
+
         if (!predicates.isEmpty()) {
             builder.filteredBy(predicates.toArray(new CharacterPredicate[]{}));
         }
