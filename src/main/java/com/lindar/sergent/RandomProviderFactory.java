@@ -41,7 +41,7 @@ public class RandomProviderFactory {
         randomProviderAccessCounter.put(getRandomSource(), ++counter);
     }
 
-    private static <T> void reinitProvider() {
+    private static void reinitProvider() {
         System.out.println("Max counter reached. Random provider is being reinitialized");
         randomProviderHolder.put(getRandomSource(), RandomSource.create(getRandomSource()));
     }

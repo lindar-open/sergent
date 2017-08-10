@@ -43,7 +43,7 @@ public class Sergent {
         System.out.println("Final value: " + randInt);
 
         IntGenerator intGenerator = sergent.intGenerator();
-        int rand = intGenerator.withMinAndMax(400, 500).randInt();
+        int rand = intGenerator.withMax(2).randInt();
         System.out.println(rand);
         rand = intGenerator.randInt();
         System.out.println(rand);

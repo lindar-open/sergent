@@ -47,6 +47,8 @@ enum SergentConfigs {
         } catch (ConfigurationException e) {
             System.err.println("Could not load Sergent config file. " + e.getMessage());
         }
+
+        System.out.println("Loaded Sergent configs: " + this.toString());
     }
 
     String getRandomProviderDefaultImpl() {
@@ -75,5 +77,16 @@ enum SergentConfigs {
 
     int getBackgroundCyclingMinSkipCounter() {
         return backgroundCyclingMinSkipCounter;
+    }
+
+    @Override
+    public String toString() {
+        return "SergentConfigs{" + "randomProviderDefaultImpl='" + randomProviderDefaultImpl + '\'' +
+                ", randomProviderSeed=" + randomProviderSeed +
+                ", randomProviderMaxGenerations=" + randomProviderMaxGenerations +
+                ", backgroundCyclingEnabled=" + backgroundCyclingEnabled +
+                ", backgroundCyclingMinSkipCounter=" + backgroundCyclingMinSkipCounter +
+                ", backgroundCyclingMaxSkipCounter=" + backgroundCyclingMaxSkipCounter +
+                '}';
     }
 }

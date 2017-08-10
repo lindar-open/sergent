@@ -1,6 +1,7 @@
 package com.lindar.sergent;
 
 import org.apache.commons.rng.UniformRandomProvider;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,14 +16,14 @@ import java.util.function.LongSupplier;
 @Component
 public class RandomProviderOverseer {
 
-    @Pointcut("(execution(* org.apache.commons.rng.UniformRandomProvider.nextInt(int)) && target(randomProvider)) || " +
-            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextInt()) && target(randomProvider)) || " +
-            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextLong()) && target(randomProvider)) || " +
-            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextLong(long)) && target(randomProvider))")
-    private void callNext(UniformRandomProvider randomProvider){}
+    @Pointcut("(execution(* org.apache.commons.rng.UniformRandomProvider.nextInt(int))) || " +
+            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextInt())) || " +
+            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextLong())) || " +
+            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextLong(long)))")
+    private void callNext(){}
 
-    @Before(value = "callNext(randomProvider)", argNames = "randomProvider")
-    public void beforeCallNext(UniformRandomProvider randomProvider) {
+    @Before(value = "callNext()", argNames = "joinPoint")
+    public void beforeCallNext(JoinPoint joinPoint) {
         RandomProviderFactory.incrementAccess();
     }
 
@@ -43,14 +44,7 @@ public class RandomProviderOverseer {
             int min = intGenerator.getMin();
             int max = intGenerator.getMax();
 
-            IntSupplier randomValueSupplier;
-            if (min > 0 && max > 0) {
-                randomValueSupplier = () -> (randomProvider.nextInt((max - min) + 1) + min);
-            } else if (max > 0) {
-                randomValueSupplier = () -> randomProvider.nextInt(max);
-            } else {
-                randomValueSupplier = randomProvider::nextInt;
-            }
+            IntSupplier randomValueSupplier = SupplierUtil.randomValueIntSupplier(randomProvider, min, max);
 
             int randInt = randomValueSupplier.getAsInt();
             for (int i = 0; i < howManyCallsToSkip; i++) {
@@ -80,14 +74,7 @@ public class RandomProviderOverseer {
             long min = longGenerator.getMin();
             long max = longGenerator.getMax();
 
-            LongSupplier randomValueSupplier;
-            if (min > 0 && max > 0) {
-                randomValueSupplier = () -> (randomProvider.nextLong((max - min) + 1) + min);
-            } else if (max > 0) {
-                randomValueSupplier = () -> randomProvider.nextLong(max);
-            } else {
-                randomValueSupplier = randomProvider::nextLong;
-            }
+            LongSupplier randomValueSupplier = SupplierUtil.randomValueLongSupplier(randomProvider, min, max);
 
             long randLong = randomValueSupplier.getAsLong();
             for (int i = 0; i < howManyCallsToSkip; i++) {
