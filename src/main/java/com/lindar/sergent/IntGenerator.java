@@ -1,85 +1,98 @@
 package com.lindar.sergent;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.rng.UniformRandomProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.IntSupplier;
+import java.util.stream.Collectors;
 
 public class IntGenerator {
 
-    private int min;
-    private int max;
-    private List<Integer> ignoreList;
-    private int[] ignoreArray;
+    private int min = Integer.MIN_VALUE;
+    private int max = Integer.MAX_VALUE - 1;
+    private List<Integer> ignore = Collections.emptyList();
 
-    IntGenerator(int min, int max, List<Integer> ignoreList, int[] ignoreArray) {
+    IntGenerator(int min, int max, List<Integer> ignoreList) {
         this.min = min;
         this.max = max;
-        this.ignoreList = ignoreList;
-        this.ignoreArray = ignoreArray;
+        this.ignore = ignoreList;
+
+        if(this.ignore == null){
+            this.ignore = Collections.emptyList();
+        } else {
+            Collections.sort(ignoreList);
+        }
     }
 
     public IntGenerator() {
     }
 
     public IntGenerator withMinAndMax(int min, int max) {
-        if (min <= 0) throw new IllegalArgumentException("Min has to be positive and greater than 0. Use the withMax method when you want min = 0");
-        if (max <= 0) throw new IllegalArgumentException("Max has to be positive and greater than 0");
+        if (max <= min || max == Integer.MAX_VALUE) throw new IllegalArgumentException("Max has to be greater then Min and less then Integer.MAX_VALUE");
         return buildCopy().min(min).max(max).build();
     }
 
     public IntGenerator withMax(int max) {
-        if (max <= 0) throw new IllegalArgumentException("Max has to be positive and greater than 0");
-        return buildCopy().max(max).build();
+        if (max <= 0 || max == Integer.MAX_VALUE) throw new IllegalArgumentException("Max has to be positive and greater than 0 and less then Integer.MAX_VALUE");
+        return buildCopy().min(0).max(max).build();
     }
 
     public IntGenerator ignore(int... ignore) {
-        return buildCopy().ignoreArray(ignore).build();
+        return buildCopy().ignore(ignore).build();
     }
 
     public IntGenerator ignore(List<Integer> ignore) {
-        return buildCopy().ignoreList(ignore).build();
+        return buildCopy().ignore(ignore).build();
     }
 
-    public int randInt() {
+    public int randInt(){
         UniformRandomProvider randomProvider = RandomProviderFactory.getInstance();
 
-        IntSupplier randomValueSupplier;
-        if (min > 0 && max > 0) {
-            randomValueSupplier = () -> (randomProvider.nextInt((max - min) + 1) + min);
-        } else if (max > 0) {
-            randomValueSupplier = () -> randomProvider.nextInt(max);
-        } else {
-            randomValueSupplier = randomProvider::nextInt;
+        int origin = min;
+        int bound = max + 1;
+
+        int r = randomProvider.nextInt();
+        int n = bound - origin - countIgnoreListInRange(), m = n - 1;
+        if ((n & m) == 0) // power of two
+            r = (r & m) + origin;
+        else if (n > 0) { // reject over-represented candidates
+            for (int u = r >>> 1; // ensure nonnegative
+                u + m - (r = u % n) < 0; // rejection check
+                u = randomProvider.nextInt() >>> 1); // retry
+            r += origin;
+        }
+        else { // range not representable
+            while (r < origin || r >= bound || ignore.contains(r))
+                r = randomProvider.nextInt();
+            return r;
         }
 
-        int randInt;
-        do {
-            randInt = randomValueSupplier.getAsInt();
-        } while (shouldRejectValue(randInt));
+        for (Integer exclude : ignore) {
+            if(exclude < min || exclude > max){
+                continue;
+            }
+            if (exclude > r) {
+                return r;
+            }
 
-        return randInt;
+            r++;
+        }
+
+        return r;
     }
 
-    private boolean shouldRejectValue(int value) {
-        boolean reject = false;
-        if (ignoreList != null && !ignoreList.isEmpty() && ignoreList.contains(value)) {
-            reject = true;
-        }
-        return reject || (ignoreArray != null && ArrayUtils.contains(ignoreArray, value));
+    private int countIgnoreListInRange(){
+        if(ignore.isEmpty()) return 0;
+
+        return (int) ignore.stream().filter(i -> i >= min && i <= max).count();
     }
 
     private IntGeneratorBuilder buildCopy() {
         IntGeneratorBuilder generatorBuilder = new IntGeneratorBuilder().min(this.min).max(this.max);
-        if (this.ignoreList != null) {
-            generatorBuilder.ignoreList(new ArrayList<>(this.ignoreList));
-        }
-
-        if (this.ignoreArray != null) {
-            generatorBuilder.ignoreArray(this.ignoreArray.clone());
+        if (this.ignore != null) {
+            generatorBuilder.ignore(new ArrayList<>(this.ignore));
         }
         return generatorBuilder;
     }
@@ -93,10 +106,9 @@ public class IntGenerator {
     }
 
     static class IntGeneratorBuilder {
-        private int min;
-        private int max;
-        private List<Integer> ignoreList;
-        private int[] ignoreArray;
+        private int min = Integer.MIN_VALUE;
+        private int max = Integer.MAX_VALUE - 1;
+        private List<Integer> ignore;
 
         IntGeneratorBuilder() {
         }
@@ -111,18 +123,18 @@ public class IntGenerator {
             return this;
         }
 
-        IntGenerator.IntGeneratorBuilder ignoreList(List<Integer> ignoreList) {
-            this.ignoreList = ignoreList;
+        IntGenerator.IntGeneratorBuilder ignore(List<Integer> ignore) {
+            this.ignore = ignore;
             return this;
         }
 
-        IntGenerator.IntGeneratorBuilder ignoreArray(int[] ignoreArray) {
-            this.ignoreArray = ignoreArray;
+        IntGenerator.IntGeneratorBuilder ignore(int[] ignoreArray) {
+            this.ignore = Arrays.stream(ignoreArray).boxed().collect(Collectors.toList());
             return this;
         }
 
         IntGenerator build() {
-            return new IntGenerator(min, max, ignoreList, ignoreArray);
+            return new IntGenerator(min, max, ignore);
         }
     }
 
@@ -131,8 +143,7 @@ public class IntGenerator {
         return "IntGenerator{" +
                 "min=" + min +
                 ", max=" + max +
-                ", ignoreList=" + ignoreList +
-                ", ignoreArray=" + Arrays.toString(ignoreArray) +
+                ", ignore=" + ignore +
                 '}';
     }
 }
