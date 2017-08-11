@@ -1,89 +1,95 @@
 package com.lindar.sergent;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.rng.UniformRandomProvider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.LongSupplier;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class LongGenerator {
 
-    private long min;
-    private long max;
-    private List<Long> ignoreList;
-    private long[] ignoreArray;
+    private long min = Long.MIN_VALUE;
+    private long max = Long.MAX_VALUE - 1;
+    private SortedSet<Long> ignore = Collections.emptySortedSet();
 
-    LongGenerator(long min, long max, List<Long> ignoreList, long[] ignoreArray) {
+
+    LongGenerator(long min, long max, List<Long> ignoreList) {
         this.min = min;
         this.max = max;
-        this.ignoreList = ignoreList;
-        this.ignoreArray = ignoreArray;
+
+        if(ignoreList == null){
+            this.ignore = Collections.emptySortedSet();
+        } else {
+            this.ignore = new TreeSet<>(ignoreList);
+        }
     }
 
     public LongGenerator() {
     }
 
-    private static LongGeneratorBuilder builder() {
-        return new LongGeneratorBuilder();
-    }
-
     public LongGenerator withMinAndMax(long min, long max) {
-        if (min <= 0) throw new IllegalArgumentException("Min has to be positive and greater than 0. Use the withMax method when you want min = 0");
-        if (max <= 0) throw new IllegalArgumentException("Max has to be positive and greater than 0");
+        if (max <= min || max == Long.MAX_VALUE) throw new IllegalArgumentException("Max has to be greater then Min and less then Long.MAX_VALUE");
         return buildCopy().min(min).max(max).build();
     }
 
     public LongGenerator withMax(long max) {
-        if (max <= 0) throw new IllegalArgumentException("Max has to be positive and greater than 0");
-        return buildCopy().max(max).build();
+        if (max <= 0 || max == Long.MAX_VALUE) throw new IllegalArgumentException("Max has to be positive and greater than 0 and less then Long.MAX_VALUE");
+        return buildCopy().min(0).max(max).build();
     }
 
     public LongGenerator ignore(long... ignore) {
-        return buildCopy().ignoreArray(ignore).build();
+        return buildCopy().ignore(ignore).build();
     }
 
     public LongGenerator ignore(List<Long> ignore) {
-        return buildCopy().ignoreList(ignore).build();
+        return buildCopy().ignore(ignore).build();
     }
 
-    public long randLong() {
+    public long randLong(){
         UniformRandomProvider randomProvider = RandomProviderFactory.getInstance();
 
-        LongSupplier randomValueSupplier;
-        if (min > 0 && max > 0) {
-            randomValueSupplier = () -> (randomProvider.nextLong((max - min) + 1) + min);
-        } else if (max > 0) {
-            randomValueSupplier = () -> randomProvider.nextLong(max);
-        } else {
-            randomValueSupplier = randomProvider::nextLong;
+        long origin = min;
+        long bound = max + 1;
+
+        long r = randomProvider.nextLong();
+        long n = bound - origin - countIgnoreListInRange(), m = n - 1;
+        if ((n & m) == 0) // power of two
+            r = (r & m) + origin;
+        else if (n > 0) { // reject over-represented candidates
+            for (long u = r >>> 1; // ensure nonnegative
+                 u + m - (r = u % n) < 0; // rejection check
+                 u = randomProvider.nextLong() >>> 1); // retry
+            r += origin;
+        }
+        else { // range not representable
+            while (r < origin || r >= bound || ignore.contains(r))
+                r = randomProvider.nextLong();
+            return r;
         }
 
-        long randLong;
-        do {
-            randLong = randomValueSupplier.getAsLong();
-        } while (shouldRejectValue(randLong));
+        for (Long exclude : ignore) {
+            if(exclude < min || exclude > max){
+                continue;
+            }
+            if (exclude > r) {
+                return r;
+            }
 
-        return randLong;
+            r++;
+        }
+
+        return r;
     }
 
-    private boolean shouldRejectValue(long value) {
-        boolean reject = false;
-        if (ignoreList != null && !ignoreList.isEmpty() && ignoreList.contains(value)) {
-            reject = true;
-        }
-        return reject || (ignoreArray != null && ArrayUtils.contains(ignoreArray, value));
+    private long countIgnoreListInRange(){
+        if(ignore.isEmpty()) return 0;
+
+        return ignore.stream().filter(i -> i >= min && i <= max).count();
     }
 
     private LongGeneratorBuilder buildCopy() {
-        LongGeneratorBuilder generatorBuilder = LongGenerator.builder().min(this.min).max(this.max);
-        if (this.ignoreList != null) {
-            generatorBuilder.ignoreList(new ArrayList<>(this.ignoreList));
-        }
-
-        if (this.ignoreArray != null) {
-            generatorBuilder.ignoreArray(this.ignoreArray.clone());
+        LongGeneratorBuilder generatorBuilder = new LongGeneratorBuilder().min(this.min).max(this.max);
+        if (this.ignore != null) {
+            generatorBuilder.ignore(new ArrayList<>(this.ignore));
         }
         return generatorBuilder;
     }
@@ -97,10 +103,9 @@ public class LongGenerator {
     }
 
     static class LongGeneratorBuilder {
-        private long min;
-        private long max;
-        private List<Long> ignoreList;
-        private long[] ignoreArray;
+        private long min = Long.MIN_VALUE;
+        private long max = Long.MAX_VALUE - 1;
+        private List<Long> ignore;
 
         LongGeneratorBuilder() {
         }
@@ -115,18 +120,18 @@ public class LongGenerator {
             return this;
         }
 
-        LongGenerator.LongGeneratorBuilder ignoreList(List<Long> ignoreList) {
-            this.ignoreList = ignoreList;
+        LongGenerator.LongGeneratorBuilder ignore(List<Long> ignore) {
+            this.ignore = ignore;
             return this;
         }
 
-        LongGenerator.LongGeneratorBuilder ignoreArray(long[] ignoreArray) {
-            this.ignoreArray = ignoreArray;
+        LongGenerator.LongGeneratorBuilder ignore(long[] ignoreArray) {
+            this.ignore = Arrays.stream(ignoreArray).boxed().collect(Collectors.toList());
             return this;
         }
 
         LongGenerator build() {
-            return new LongGenerator(min, max, ignoreList, ignoreArray);
+            return new LongGenerator(min, max, ignore);
         }
     }
 
@@ -135,8 +140,7 @@ public class LongGenerator {
         return "LongGenerator{" +
                 "min=" + min +
                 ", max=" + max +
-                ", ignoreList=" + ignoreList +
-                ", ignoreArray=" + Arrays.toString(ignoreArray) +
+                ", ignore=" + ignore +
                 '}';
     }
 }

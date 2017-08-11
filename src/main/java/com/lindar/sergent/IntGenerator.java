@@ -2,27 +2,23 @@ package com.lindar.sergent;
 
 import org.apache.commons.rng.UniformRandomProvider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class IntGenerator {
 
     private int min = Integer.MIN_VALUE;
     private int max = Integer.MAX_VALUE - 1;
-    private List<Integer> ignore = Collections.emptyList();
+    private SortedSet<Integer> ignore = Collections.emptySortedSet();
 
     IntGenerator(int min, int max, List<Integer> ignoreList) {
         this.min = min;
         this.max = max;
-        this.ignore = ignoreList;
 
-        if(this.ignore == null){
-            this.ignore = Collections.emptyList();
+        if(ignoreList == null){
+            this.ignore = Collections.emptySortedSet();
         } else {
-            Collections.sort(ignoreList);
+            this.ignore = new TreeSet<>(ignoreList);
         }
     }
 

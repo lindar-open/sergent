@@ -101,6 +101,8 @@ class IntGeneratorTest {
         testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(11,12,13,14,15)), 10000), 0, 10, Arrays.asList(11,12,13,14,15));
         // first half of numbers - int array
         testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(0,1,2,3,4,5), 10000), 0, 10, Arrays.asList(0,1,2,3,4,5));
+        // duplicate numbers
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 5).ignore(5,5,5,5,5,5,5,5,5,5,5,5), 10000), 0, 10, Arrays.asList(5,5,5,5,5,5,5,5,5,5,5,5));
         // no bounds
         testAllNumbersIgnore(buildRandomList(sergent.intGenerator().ignore(Arrays.asList(31909859)), 10000), Arrays.asList(31909859));
         // null list
