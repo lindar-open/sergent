@@ -32,21 +32,22 @@ enum SergentConfigs {
         Parameters params = new Parameters();
         FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
                         .configure(params.fileBased().setSynchronizer(new ReadWriteSynchronizer()).setFile(propertiesFile).setLocationStrategy(new ClasspathLocationStrategy()));
-        PropertiesConfiguration config;
+        PropertiesConfiguration config = new PropertiesConfiguration();
         try {
             config = builder.getConfiguration();
-            randomProviderDefaultImpl = config.getString("sergent.random-provider.default-implementation", "MT");
-            if (StringUtils.isNotBlank(config.getString("sergent.random-provider.seed"))) {
-                randomProviderSeed = config.getLong("sergent.random-provider.seed", null);
-            }
-            randomProviderMaxGenerations = config.getInt("sergent.random-provider.max-generations", 10_000);
-
-            backgroundCyclingEnabled = config.getBoolean("sergent.background-cycling.enabled", false);
-            backgroundCyclingMinSkipCounter = config.getInt("sergent.background-cycling.min-skip-counter", 10);
-            backgroundCyclingMaxSkipCounter = config.getInt("sergent.background-cycling.max-skip-counter", 30);
         } catch (ConfigurationException e) {
             System.err.println("Could not load Sergent config file. " + e.getMessage());
         }
+
+        randomProviderDefaultImpl = config.getString("sergent.random-provider.default-implementation", "MT");
+        if (StringUtils.isNotBlank(config.getString("sergent.random-provider.seed"))) {
+            randomProviderSeed = config.getLong("sergent.random-provider.seed", null);
+        }
+        randomProviderMaxGenerations = config.getInt("sergent.random-provider.max-generations", 10_000);
+
+        backgroundCyclingEnabled = config.getBoolean("sergent.background-cycling.enabled", false);
+        backgroundCyclingMinSkipCounter = config.getInt("sergent.background-cycling.min-skip-counter", 10);
+        backgroundCyclingMaxSkipCounter = config.getInt("sergent.background-cycling.max-skip-counter", 30);
 
         System.out.println("Loaded Sergent configs: " + this.toString());
     }

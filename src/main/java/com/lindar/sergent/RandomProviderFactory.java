@@ -35,6 +35,8 @@ public class RandomProviderFactory {
         Integer counter = randomProviderAccessCounter.get(getRandomSource());
         if (counter == null) counter = 0;
         else if (counter > SergentConfigs.INSTANCE.getRandomProviderMaxGenerations()) {
+            System.out.println("Max counter reached: " + SergentConfigs.INSTANCE.getRandomProviderMaxGenerations()
+                    + ". Random provider is being reinitialized");
             reinitProvider();
             counter = 0;
         }
@@ -42,7 +44,6 @@ public class RandomProviderFactory {
     }
 
     private static void reinitProvider() {
-        System.out.println("Max counter reached. Random provider is being reinitialized");
         randomProviderHolder.put(getRandomSource(), RandomSource.create(getRandomSource()));
     }
 }

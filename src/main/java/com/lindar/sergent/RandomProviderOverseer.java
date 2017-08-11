@@ -52,7 +52,7 @@ public class RandomProviderOverseer {
             }
             return randInt;
         }
-        System.out.println("Background cycling is disabled. Rock on and return original value");
+//        System.out.println("Background cycling is disabled. Rock on and return original value");
         return pjp.proceed(new Object[] {intGenerator});
     }
 
@@ -82,7 +82,7 @@ public class RandomProviderOverseer {
             }
             return randLong;
         }
-        System.out.println("Background cycling is disabled. Rock on and return original value");
+//        System.out.println("Background cycling is disabled. Rock on and return original value");
         return pjp.proceed(new Object[] {longGenerator});
     }
 }
