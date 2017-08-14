@@ -41,14 +41,9 @@ public class RandomProviderOverseer {
             int howManyCallsToSkip = randomProvider.nextInt((sergentConfigs.getBackgroundCyclingMaxSkipCounter() - sergentConfigs.getBackgroundCyclingMinSkipCounter()) + 1)
                     + sergentConfigs.getBackgroundCyclingMinSkipCounter();
 
-            int min = intGenerator.getMin();
-            int max = intGenerator.getMax();
-
-            IntSupplier randomValueSupplier = SupplierUtil.randomValueIntSupplier(randomProvider, min, max);
-
-            int randInt = randomValueSupplier.getAsInt();
+            int randInt = (int)pjp.proceed();
             for (int i = 0; i < howManyCallsToSkip; i++) {
-                randInt = randomValueSupplier.getAsInt();
+                randInt = (int)pjp.proceed();
             }
             return randInt;
         }
@@ -71,14 +66,9 @@ public class RandomProviderOverseer {
             int howManyCallsToSkip = randomProvider.nextInt((sergentConfigs.getBackgroundCyclingMaxSkipCounter() - sergentConfigs.getBackgroundCyclingMinSkipCounter()) + 1)
                     + sergentConfigs.getBackgroundCyclingMinSkipCounter();
 
-            long min = longGenerator.getMin();
-            long max = longGenerator.getMax();
-
-            LongSupplier randomValueSupplier = SupplierUtil.randomValueLongSupplier(randomProvider, min, max);
-
-            long randLong = randomValueSupplier.getAsLong();
+            long randLong = (long)pjp.proceed();
             for (int i = 0; i < howManyCallsToSkip; i++) {
-                randLong = randomValueSupplier.getAsLong();
+                randLong = (long)pjp.proceed();
             }
             return randLong;
         }
