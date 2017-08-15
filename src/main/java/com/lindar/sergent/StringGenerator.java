@@ -106,12 +106,12 @@ public class StringGenerator {
                     }
                 }
                 if (!lowercase && !uppercase) {
-                    if('a' < minCodePoint){
-                        minCodePoint = 'a';
+                    if('A' < minCodePoint){
+                        minCodePoint = 'A';
                     }
 
-                    if('Z' > maxCodePoint){
-                        maxCodePoint = 'Z';
+                    if('z' > maxCodePoint){
+                        maxCodePoint = 'z';
                     }
                 }
             }
