@@ -57,9 +57,14 @@ public class ListGenerator {
         int diff = max - min + 1;
         List<Integer> randomList = new ArrayList<>(listSize);
         IntStream.range(0, listSize).forEach(index -> {
-            IntGenerator intGen = new IntGenerator().withMinAndMax(min, max);
+            IntGenerator intGen = new IntGenerator();
+            if (max > 0 && min > 0) {
+                intGen = intGen.withMinAndMax(min, max);
+            } else if (max > 0) {
+                intGen = intGen.withMax(max);
+            }
             if (unique && diff >= listSize) {
-                intGen.ignore(randomList);
+                intGen = intGen.ignore(randomList);
             }
             randomList.add(intGen.randInt());
         });

@@ -24,6 +24,7 @@ public class RandomProviderFactory {
     public static UniformRandomProvider getInstance() {
         RandomSource randomSource = getRandomSource();
         if (randomProviderHolder.containsKey(randomSource)) {
+            reinitProviderIfNecessary(randomSource);
             return randomProviderHolder.get(randomSource);
         }
         UniformRandomProvider randomProvider = RandomSource.create(randomSource, SergentConfigs.INSTANCE.getRandomProviderSeed());
@@ -34,16 +35,17 @@ public class RandomProviderFactory {
     static void incrementAccess() {
         Integer counter = randomProviderAccessCounter.get(getRandomSource());
         if (counter == null) counter = 0;
-        else if (counter > SergentConfigs.INSTANCE.getRandomProviderMaxGenerations()) {
-            System.out.println("Max counter reached: " + SergentConfigs.INSTANCE.getRandomProviderMaxGenerations()
-                    + ". Random provider is being reinitialized");
-            reinitProvider();
-            counter = 0;
-        }
         randomProviderAccessCounter.put(getRandomSource(), ++counter);
     }
 
-    private static void reinitProvider() {
-        randomProviderHolder.put(getRandomSource(), RandomSource.create(getRandomSource()));
+    private static void reinitProviderIfNecessary(RandomSource randomSource) {
+        Integer counter = randomProviderAccessCounter.get(randomSource);
+        Integer maxGenerations = SergentConfigs.INSTANCE.getRandomProviderMaxGenerations();
+        if (counter > maxGenerations) {
+            System.out.println("Max counter reached: " + maxGenerations + ". Random provider is being reinitialized");
+            randomProviderHolder.put(getRandomSource(), RandomSource.create(getRandomSource()));
+            randomProviderAccessCounter.put(getRandomSource(), 0);
+        }
+
     }
 }

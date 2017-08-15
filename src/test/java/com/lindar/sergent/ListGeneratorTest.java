@@ -1,30 +1,30 @@
 package com.lindar.sergent;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
-class ListGeneratorTest {
+public class ListGeneratorTest {
 
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
     }
 
     @Test
-    void randUniqueIntegers() {
+    public void randUniqueIntegers() {
         ListGenerator listGenerator = new ListGenerator();
         int min = 2;
         int max = 90;
         List<Integer> generatedNumbers = listGenerator.withMinAndMax(min, max).unique().randIntegers();
 
-        Assertions.assertEquals(max - min + 1, generatedNumbers.size(), "Not enough numbers generated");
+        Assert.assertEquals("Not enough numbers generated", max - min + 1, generatedNumbers.size());
 
         boolean hasAllNumbers = IntStream.rangeClosed(2, 90).boxed().allMatch(generatedNumbers::contains);
 
-        Assertions.assertTrue(hasAllNumbers, "Numbers are missing from the list");
+        Assert.assertTrue("Numbers are missing from the list", hasAllNumbers);
     }
 
 }
