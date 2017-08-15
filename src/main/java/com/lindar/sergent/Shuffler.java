@@ -8,16 +8,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Shuffler {
+    long randomProviderId;
 
     private int start = 0;
     private boolean towardHead = false;
 
-    Shuffler(int start, boolean towardHead) {
+    Shuffler(int start, boolean towardHead, long randomProviderId) {
+        this(randomProviderId);
         this.start = start;
         this.towardHead = towardHead;
     }
 
-    public Shuffler() {
+    public Shuffler(long randomProviderId) {
+        this.randomProviderId = randomProviderId;
     }
 
     /**
@@ -49,14 +52,14 @@ public class Shuffler {
      * Shuffle the entries of the given list, using the Fisher–Yates algorithm and the randomProvider chosen
      */
     public <T> void list(List<T> list) {
-        ListSampler.shuffle(RandomProviderFactory.getInstance(), list, start, towardHead);
+        ListSampler.shuffle(RandomProviderFactory.getInstance(this.randomProviderId), list, start, towardHead);
     }
 
     /**
      * Shuffle the entries of the given array, using the Fisher–Yates algorithm and the randomProvider chosen
      */
     public void array(int[] numbers) {
-        PermutationSampler.shuffle(RandomProviderFactory.getInstance(), numbers, start, towardHead);
+        PermutationSampler.shuffle(RandomProviderFactory.getInstance(this.randomProviderId), numbers, start, towardHead);
     }
 
     /**
@@ -64,19 +67,22 @@ public class Shuffler {
      * Returns a list of shuffled numbers from given array
      */
     public List<Integer> arrayToList(int[] numbers) {
-        PermutationSampler.shuffle(RandomProviderFactory.getInstance(), numbers, start, towardHead);
+        PermutationSampler.shuffle(RandomProviderFactory.getInstance(this.randomProviderId), numbers, start, towardHead);
         return Arrays.stream(numbers).boxed().collect(Collectors.toList());
     }
 
     private ShufflerBuilder buildCopy() {
-        return new ShufflerBuilder().start(this.start).towardHead(this.towardHead);
+        return new ShufflerBuilder(this.randomProviderId).start(this.start).towardHead(this.towardHead);
     }
 
     static class ShufflerBuilder {
+        private long randomProviderId;
+
         private int start;
         private boolean towardHead;
 
-        ShufflerBuilder() {
+        ShufflerBuilder(long randomProviderId) {
+            this.randomProviderId = randomProviderId;
         }
 
         Shuffler.ShufflerBuilder start(int start) {
@@ -90,7 +96,7 @@ public class Shuffler {
         }
 
         Shuffler build() {
-            return new Shuffler(start, towardHead);
+            return new Shuffler(start, towardHead, randomProviderId);
         }
     }
 }

@@ -9,24 +9,23 @@ import java.util.List;
 import java.util.function.LongSupplier;
 
 public class LongGenerator {
+    long randomProviderId;
 
     private long min;
     private long max;
     private List<Long> ignoreList;
     private long[] ignoreArray;
 
-    LongGenerator(long min, long max, List<Long> ignoreList, long[] ignoreArray) {
+    LongGenerator(long min, long max, List<Long> ignoreList, long[] ignoreArray, long randomProviderId) {
+        this(randomProviderId);
         this.min = min;
         this.max = max;
         this.ignoreList = ignoreList;
         this.ignoreArray = ignoreArray;
     }
 
-    public LongGenerator() {
-    }
-
-    private static LongGeneratorBuilder builder() {
-        return new LongGeneratorBuilder();
+    public LongGenerator(long randomProviderId) {
+        this.randomProviderId = randomProviderId;
     }
 
     public LongGenerator withMinAndMax(long min, long max) {
@@ -49,7 +48,7 @@ public class LongGenerator {
     }
 
     public long randLong() {
-        UniformRandomProvider randomProvider = RandomProviderFactory.getInstance();
+        UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(this.randomProviderId);
 
         LongSupplier randomValueSupplier;
         if (min > 0 && max > 0) {
@@ -77,7 +76,7 @@ public class LongGenerator {
     }
 
     private LongGeneratorBuilder buildCopy() {
-        LongGeneratorBuilder generatorBuilder = LongGenerator.builder().min(this.min).max(this.max);
+        LongGeneratorBuilder generatorBuilder = new LongGeneratorBuilder(this.randomProviderId).min(this.min).max(this.max);
         if (this.ignoreList != null) {
             generatorBuilder.ignoreList(new ArrayList<>(this.ignoreList));
         }
@@ -102,7 +101,10 @@ public class LongGenerator {
         private List<Long> ignoreList;
         private long[] ignoreArray;
 
-        LongGeneratorBuilder() {
+        private long randomProviderId;
+
+        LongGeneratorBuilder(long randomProviderId) {
+            this.randomProviderId = randomProviderId;
         }
 
         LongGenerator.LongGeneratorBuilder min(long min) {
@@ -126,7 +128,7 @@ public class LongGenerator {
         }
 
         LongGenerator build() {
-            return new LongGenerator(min, max, ignoreList, ignoreArray);
+            return new LongGenerator(min, max, ignoreList, ignoreArray, randomProviderId);
         }
     }
 

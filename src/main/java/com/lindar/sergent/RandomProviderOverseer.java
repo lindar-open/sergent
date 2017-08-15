@@ -1,31 +1,26 @@
 package com.lindar.sergent;
 
 import org.apache.commons.rng.UniformRandomProvider;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-
-import java.util.function.IntSupplier;
-import java.util.function.LongSupplier;
 
 @Aspect
 @Component
 public class RandomProviderOverseer {
 
-    @Pointcut("(execution(* org.apache.commons.rng.UniformRandomProvider.nextInt(int))) || " +
-            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextInt())) || " +
-            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextLong())) || " +
-            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextLong(long)))")
-    private void callNext(){}
-
-    @Before(value = "callNext()", argNames = "joinPoint")
-    public void beforeCallNext(JoinPoint joinPoint) {
-        RandomProviderFactory.incrementAccess();
-    }
+//    @Pointcut("(execution(* org.apache.commons.rng.UniformRandomProvider.nextInt(int))) || " +
+//            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextInt())) || " +
+//            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextLong())) || " +
+//            "(execution(* org.apache.commons.rng.UniformRandomProvider.nextLong(long)))")
+//    private void callNext(){}
+//
+//    @Before(value = "callNext()", argNames = "joinPoint")
+//    public void beforeCallNext(JoinPoint joinPoint) {
+//        RandomProviderFactory.incrementAccess();
+//    }
 
     @Pointcut("execution(* com.lindar.sergent.IntGenerator.randInt())")
     private void randInt() {}
@@ -36,7 +31,7 @@ public class RandomProviderOverseer {
 
         SergentConfigs sergentConfigs = SergentConfigs.INSTANCE;
         if (sergentConfigs.isBackgroundCyclingEnabled()) {
-            UniformRandomProvider randomProvider = RandomProviderFactory.getInstance();
+            UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(intGenerator.randomProviderId);
 
             int howManyCallsToSkip = randomProvider.nextInt((sergentConfigs.getBackgroundCyclingMaxSkipCounter() - sergentConfigs.getBackgroundCyclingMinSkipCounter()) + 1)
                     + sergentConfigs.getBackgroundCyclingMinSkipCounter();
@@ -44,10 +39,11 @@ public class RandomProviderOverseer {
             int randInt = (int)pjp.proceed();
             for (int i = 0; i < howManyCallsToSkip; i++) {
                 randInt = (int)pjp.proceed();
+                RandomProviderFactory.incrementAccess(intGenerator.randomProviderId);
             }
             return randInt;
         }
-//        System.out.println("Background cycling is disabled. Rock on and return original value");
+        RandomProviderFactory.incrementAccess(intGenerator.randomProviderId);
         return pjp.proceed(new Object[] {intGenerator});
     }
 
@@ -61,7 +57,7 @@ public class RandomProviderOverseer {
 
         SergentConfigs sergentConfigs = SergentConfigs.INSTANCE;
         if (sergentConfigs.isBackgroundCyclingEnabled()) {
-            UniformRandomProvider randomProvider = RandomProviderFactory.getInstance();
+            UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(longGenerator.randomProviderId);
 
             int howManyCallsToSkip = randomProvider.nextInt((sergentConfigs.getBackgroundCyclingMaxSkipCounter() - sergentConfigs.getBackgroundCyclingMinSkipCounter()) + 1)
                     + sergentConfigs.getBackgroundCyclingMinSkipCounter();
@@ -69,10 +65,11 @@ public class RandomProviderOverseer {
             long randLong = (long)pjp.proceed();
             for (int i = 0; i < howManyCallsToSkip; i++) {
                 randLong = (long)pjp.proceed();
+                RandomProviderFactory.incrementAccess(longGenerator.randomProviderId);
             }
             return randLong;
         }
-//        System.out.println("Background cycling is disabled. Rock on and return original value");
+        RandomProviderFactory.incrementAccess(longGenerator.randomProviderId);
         return pjp.proceed(new Object[] {longGenerator});
     }
 }

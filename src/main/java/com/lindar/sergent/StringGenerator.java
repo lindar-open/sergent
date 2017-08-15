@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StringGenerator {
+    long randomProviderId;
+
     private int length = 10;
 
     private int minCodePoint;
@@ -47,7 +49,7 @@ public class StringGenerator {
     }
 
     public String randString() {
-        UniformRandomProvider randomProvider = RandomProviderFactory.getInstance();
+        UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(this.randomProviderId);
 
         List<CharacterPredicate> predicates = new ArrayList<>();
 
@@ -136,15 +138,18 @@ public class StringGenerator {
         this.uppercase = uppercase;
     }
 
-    public StringGenerator() {
+    public StringGenerator(long randomProviderId) {
+        this.randomProviderId = randomProviderId;
     }
 
     private StringGeneratorBuilder buildCopy() {
-        return new StringGeneratorBuilder().length(this.length).alphabetic(this.alphabetic).numeric(this.numeric)
+        return new StringGeneratorBuilder(this.randomProviderId).length(this.length).alphabetic(this.alphabetic).numeric(this.numeric)
                 .lowercase(this.lowercase).uppercase(this.uppercase).minCodePoint(this.minCodePoint).maxCodePoint(this.maxCodePoint);
     }
 
     public static class StringGeneratorBuilder {
+        private long randomProviderId;
+
         private int length = 10;
         private int minCodePoint;
         private int maxCodePoint;
@@ -153,7 +158,8 @@ public class StringGenerator {
         private boolean lowercase;
         private boolean uppercase;
 
-        StringGeneratorBuilder() {
+        StringGeneratorBuilder(long randomProviderId) {
+            this.randomProviderId = randomProviderId;
         }
 
         public StringGenerator.StringGeneratorBuilder length(int length) {

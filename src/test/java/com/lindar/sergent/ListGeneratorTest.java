@@ -15,7 +15,7 @@ public class ListGeneratorTest {
 
     @Test
     public void randUniqueIntegers() {
-        ListGenerator listGenerator = new ListGenerator();
+        ListGenerator listGenerator = SergentFactory.newInstance().listGenerator();
         int min = 2;
         int max = 90;
         List<Integer> generatedNumbers = listGenerator.withMinAndMax(min, max).unique().randIntegers();

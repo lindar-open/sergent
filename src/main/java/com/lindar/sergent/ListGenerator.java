@@ -6,20 +6,23 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ListGenerator {
+    long randomProviderId;
 
     private int min;
     private int max;
     private int listSize;
     private boolean unique;
 
-    ListGenerator(int min, int max, int listSize, boolean unique) {
+    ListGenerator(int min, int max, int listSize, boolean unique, long randomProviderId) {
+        this(randomProviderId);
         this.min = min;
         this.max = max;
         this.listSize = listSize;
         this.unique = unique;
     }
 
-    public ListGenerator() {
+    public ListGenerator(long randomProviderId) {
+        this.randomProviderId = randomProviderId;
     }
 
     public ListGenerator withMinAndMax(int min, int max) {
@@ -50,14 +53,14 @@ public class ListGenerator {
 
         if (unique && (listSize == 0 || listSize == max - min)) {
             List<Integer> numbers = IntStream.rangeClosed(min, max).boxed().collect(Collectors.toList());
-            new Shuffler().list(numbers);
+            new Shuffler(this.randomProviderId).list(numbers);
             return numbers;
         }
 
         int diff = max - min + 1;
         List<Integer> randomList = new ArrayList<>(listSize);
         IntStream.range(0, listSize).forEach(index -> {
-            IntGenerator intGen = new IntGenerator();
+            IntGenerator intGen = new IntGenerator(this.randomProviderId);
             if (max > 0 && min > 0) {
                 intGen = intGen.withMinAndMax(min, max);
             } else if (max > 0) {
@@ -73,17 +76,20 @@ public class ListGenerator {
     }
 
     private ListGeneratorBuilder buildCopy() {
-        return new ListGeneratorBuilder()
+        return new ListGeneratorBuilder(this.randomProviderId)
                 .min(this.min).max(this.max).listSize(this.listSize).unique(this.unique);
     }
 
     static class ListGeneratorBuilder {
+        private long randomProviderId;
+
         private int min;
         private int max;
         private int listSize;
         private boolean unique;
 
-        ListGeneratorBuilder() {
+        ListGeneratorBuilder(long randomProviderId) {
+            this.randomProviderId = randomProviderId;
         }
 
         ListGenerator.ListGeneratorBuilder min(int min) {
@@ -107,7 +113,7 @@ public class ListGenerator {
         }
 
         ListGenerator build() {
-            return new ListGenerator(min, max, listSize, unique);
+            return new ListGenerator(min, max, listSize, unique, randomProviderId);
         }
     }
 }
