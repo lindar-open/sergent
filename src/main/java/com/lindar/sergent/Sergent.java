@@ -1,14 +1,10 @@
 package com.lindar.sergent;
 
-import org.apache.commons.rng.UniformRandomProvider;
-import org.apache.commons.rng.simple.RandomSource;
-
 public class Sergent {
 
     long randomProviderId;
     public Sergent() {
-        UniformRandomProvider randomProvider = RandomSource.create(RandomSource.MT);
-        randomProviderId = randomProvider.nextLong();
+        randomProviderId = Thread.currentThread().getId();
     }
 
     /**

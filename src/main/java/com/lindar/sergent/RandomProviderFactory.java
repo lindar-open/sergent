@@ -5,6 +5,7 @@ import org.apache.commons.rng.simple.RandomSource;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class RandomProviderFactory {
     private static final Map<Long, UniformRandomProvider> randomProviderHolder = new ConcurrentHashMap<>();
@@ -45,6 +46,9 @@ public class RandomProviderFactory {
             System.out.println("Max counter reached: " + maxGenerations + ". Random provider with ID: " + randomProviderId + " is being reinitialized");
             randomProviderHolder.put(randomProviderId, RandomSource.create(getRandomSource()));
             randomProviderAccessCounter.put(randomProviderId, 0);
+
+            System.out.println("At this point there are " + randomProviderHolder.size() + " providers stored in the holder. The stored keys are: "
+                    + randomProviderHolder.keySet().stream().map(Object::toString).collect(Collectors.joining(" | ")));
         }
 
     }
