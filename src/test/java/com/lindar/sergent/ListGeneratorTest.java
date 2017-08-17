@@ -16,13 +16,13 @@ public class ListGeneratorTest {
     @Test
     public void randUniqueIntegers() {
         ListGenerator listGenerator = SergentFactory.newInstance().listGenerator();
-        int min = 2;
+        int min = 1;
         int max = 90;
         List<Integer> generatedNumbers = listGenerator.withMinAndMax(min, max).unique().randIntegers();
 
         Assert.assertEquals("Not enough numbers generated", max - min + 1, generatedNumbers.size());
 
-        boolean hasAllNumbers = IntStream.rangeClosed(2, 90).boxed().allMatch(generatedNumbers::contains);
+        boolean hasAllNumbers = IntStream.rangeClosed(1, 90).boxed().allMatch(generatedNumbers::contains);
 
         Assert.assertTrue("Numbers are missing from the list", hasAllNumbers);
     }

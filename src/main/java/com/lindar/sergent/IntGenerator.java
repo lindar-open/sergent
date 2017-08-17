@@ -7,13 +7,14 @@ import java.util.stream.Collectors;
 
 public class IntGenerator {
 
-    long randomProviderId;
+    long randomProviderSeed;
+
     private int min = Integer.MIN_VALUE;
     private int max = Integer.MAX_VALUE - 1;
     private SortedSet<Integer> ignore = Collections.emptySortedSet();
 
-    IntGenerator(int min, int max, List<Integer> ignoreList, long randomProviderId) {
-        this(randomProviderId);
+    IntGenerator(int min, int max, List<Integer> ignoreList, long randomProviderSeed) {
+        this(randomProviderSeed);
         this.min = min;
         this.max = max;
 
@@ -24,8 +25,8 @@ public class IntGenerator {
         }
     }
 
-    public IntGenerator(long randomProviderId) {
-        this.randomProviderId = randomProviderId;
+    public IntGenerator(long randomProviderSeed) {
+        this.randomProviderSeed = randomProviderSeed;
     }
 
     public IntGenerator withMinAndMax(int min, int max) {
@@ -47,7 +48,7 @@ public class IntGenerator {
     }
 
     public int randInt() {
-        UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(this.randomProviderId);
+        UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(this.randomProviderSeed);
 
         int origin = min;
         int bound = max + 1;
@@ -89,7 +90,7 @@ public class IntGenerator {
     }
 
     private IntGeneratorBuilder buildCopy() {
-        IntGeneratorBuilder generatorBuilder = new IntGeneratorBuilder(this.randomProviderId).min(this.min).max(this.max);
+        IntGeneratorBuilder generatorBuilder = new IntGeneratorBuilder(this.randomProviderSeed).min(this.min).max(this.max);
         if (this.ignore != null) {
             generatorBuilder.ignore(new ArrayList<>(this.ignore));
         }
@@ -109,10 +110,10 @@ public class IntGenerator {
         private int max = Integer.MAX_VALUE - 1;
         private List<Integer> ignore;
 
-        private long randomProviderId;
+        private long randomProviderSeed;
 
-        IntGeneratorBuilder(long randomProviderId) {
-            this.randomProviderId = randomProviderId;
+        IntGeneratorBuilder(long randomProviderSeed) {
+            this.randomProviderSeed = randomProviderSeed;
         }
 
         IntGenerator.IntGeneratorBuilder min(int min) {
@@ -136,7 +137,7 @@ public class IntGenerator {
         }
 
         IntGenerator build() {
-            return new IntGenerator(min, max, ignore, randomProviderId);
+            return new IntGenerator(min, max, ignore, randomProviderSeed);
         }
     }
 

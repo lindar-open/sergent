@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 
 public class LongGenerator {
 
-    long randomProviderId;
+    long randomProviderSeed;
     private long min = Long.MIN_VALUE;
     private long max = Long.MAX_VALUE - 1;
     private SortedSet<Long> ignore = Collections.emptySortedSet();
 
-    LongGenerator(long min, long max, List<Long> ignoreList, long randomProviderId) {
-        this(randomProviderId);
+    LongGenerator(long min, long max, List<Long> ignoreList, long randomProviderSeed) {
+        this(randomProviderSeed);
         this.min = min;
         this.max = max;
 
@@ -24,8 +24,8 @@ public class LongGenerator {
         }
     }
 
-    public LongGenerator(long randomProviderId) {
-        this.randomProviderId = randomProviderId;
+    public LongGenerator(long randomProviderSeed) {
+        this.randomProviderSeed = randomProviderSeed;
     }
 
     public LongGenerator withMinAndMax(long min, long max) {
@@ -47,7 +47,7 @@ public class LongGenerator {
     }
 
     public long randLong(){
-        UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(randomProviderId);
+        UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(randomProviderSeed);
 
         long origin = min;
         long bound = max + 1;
@@ -89,7 +89,7 @@ public class LongGenerator {
     }
 
     private LongGeneratorBuilder buildCopy() {
-        LongGeneratorBuilder generatorBuilder = new LongGeneratorBuilder(randomProviderId).min(this.min).max(this.max);
+        LongGeneratorBuilder generatorBuilder = new LongGeneratorBuilder(randomProviderSeed).min(this.min).max(this.max);
         if (this.ignore != null) {
             generatorBuilder.ignore(new ArrayList<>(this.ignore));
         }
@@ -109,10 +109,10 @@ public class LongGenerator {
         private long max = Long.MAX_VALUE - 1;
         private List<Long> ignore;
 
-        private long randomProviderId;
+        private long randomProviderSeed;
 
-        LongGeneratorBuilder(long randomProviderId) {
-            this.randomProviderId = randomProviderId;
+        LongGeneratorBuilder(long randomProviderSeed) {
+            this.randomProviderSeed = randomProviderSeed;
         }
 
         LongGenerator.LongGeneratorBuilder min(long min) {
@@ -136,7 +136,7 @@ public class LongGenerator {
         }
 
         LongGenerator build() {
-            return new LongGenerator(min, max, ignore, randomProviderId);
+            return new LongGenerator(min, max, ignore, randomProviderSeed);
         }
     }
 

@@ -18,18 +18,11 @@ public class IntGeneratorMultiThreadedTest {
     public void setUp() {
     }
 
-//    @Test
-//    @ThreadCount(THREAD_COUNT)
-//    public void randMultiThreadedBigIntList() {
-//        List<Integer> list = SergentFactory.newInstance().listGenerator().ofSize(SIZE_CHECK).randIntegers();
-//        Assert.assertTrue("Not all numbers have been generated", list.size() == SIZE_CHECK);
-//    }
-
     @Test
     @ThreadCount(THREAD_COUNT)
     public void randMultiThreadedSingleInt() {
         Sergent sergent = SergentFactory.newInstance();
-        System.out.println("Running thread : " + sergent.intGenerator().randInt() + " with provider ID: " + sergent.randomProviderId);
+        System.out.println("Running thread : " + sergent.intGenerator().randInt() + " with provider ID: " + sergent.randomProviderSeed);
         IntStream.rangeClosed(0, SIZE_CHECK).forEach(i -> {
             Integer number = sergent.intGenerator().randInt();
             Assert.assertNotNull("Failed to generate random number", number);

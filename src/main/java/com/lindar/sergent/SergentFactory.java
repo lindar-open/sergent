@@ -7,15 +7,9 @@ public final class SergentFactory {
     }
 
     public static Sergent newInstance(long seed) {
-        SergentConfigs.INSTANCE.setRandomProviderSeed(seed);
-        return new Sergent();
+        return new Sergent(seed);
     }
 
-    public static Sergent newInstance(int seed) {
-        SergentConfigs.INSTANCE.setRandomProviderSeed(seed);
-        return new Sergent();
-    }
-    
     private SergentFactory() {
     }
 
