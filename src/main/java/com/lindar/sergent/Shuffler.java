@@ -32,8 +32,8 @@ public class Shuffler {
     }
 
     /**
-     * If towardHead (default is false) it will shuffle all elements from the start index to end of list (right side),
-     * otherwise it will shuffle the left side from the start index. Default index is 0
+     * If towardHead (default is false) it will shuffle all elements from the start index to beginning of list (left side),
+     * otherwise it will shuffle the right side from the start index. Default index is 0
      */
     public Shuffler towardHead() {
         return buildCopy().towardHead(true).build();
