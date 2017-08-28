@@ -8,19 +8,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Shuffler {
-    long randomProviderSeed;
+    private Long randomProviderSeed;
 
     private int start = 0;
     private boolean towardHead = false;
 
-    Shuffler(int start, boolean towardHead, long randomProviderSeed) {
-        this(randomProviderSeed);
+    Shuffler(int start, boolean towardHead, Long randomProviderSeed) {
+        this.randomProviderSeed = randomProviderSeed;
         this.start = start;
         this.towardHead = towardHead;
     }
 
-    public Shuffler(long randomProviderSeed) {
-        this.randomProviderSeed = randomProviderSeed;
+    public Shuffler() {
+    }
+
+    public Shuffler withSeed(Long seed) {
+        return buildCopy().seed(seed).build();
     }
 
     /**
@@ -72,17 +75,18 @@ public class Shuffler {
     }
 
     private ShufflerBuilder buildCopy() {
-        return new ShufflerBuilder(this.randomProviderSeed).start(this.start).towardHead(this.towardHead);
+        return new ShufflerBuilder().seed(this.randomProviderSeed).start(this.start).towardHead(this.towardHead);
     }
 
     static class ShufflerBuilder {
-        private long randomProviderSeed;
+        private Long randomProviderSeed;
 
         private int start;
         private boolean towardHead;
 
-        ShufflerBuilder(long randomProviderSeed) {
+        Shuffler.ShufflerBuilder seed(Long randomProviderSeed) {
             this.randomProviderSeed = randomProviderSeed;
+            return this;
         }
 
         Shuffler.ShufflerBuilder start(int start) {

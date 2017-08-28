@@ -22,7 +22,6 @@ public class IntGeneratorMultiThreadedTest {
     @ThreadCount(THREAD_COUNT)
     public void randMultiThreadedSingleInt() {
         Sergent sergent = SergentFactory.newInstance();
-        System.out.println("Running thread : " + sergent.intGenerator().randInt() + " with provider ID: " + sergent.randomProviderSeed);
         IntStream.rangeClosed(0, SIZE_CHECK).forEach(i -> {
             Integer number = sergent.intGenerator().randInt();
             Assert.assertNotNull("Failed to generate random number", number);

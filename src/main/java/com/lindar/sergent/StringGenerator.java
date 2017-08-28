@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StringGenerator {
-    long randomProviderSeed;
+    private Long randomProviderSeed;
 
     private int length = 10;
 
@@ -19,6 +19,10 @@ public class StringGenerator {
     private boolean numeric;
     private boolean lowercase;
     private boolean uppercase;
+
+    public StringGenerator withSeed(Long seed) {
+        return buildCopy().seed(seed).build();
+    }
 
     public StringGenerator length(int length) {
         return buildCopy().length(length).build();
@@ -74,8 +78,8 @@ public class StringGenerator {
         if (minCodePoint > 0 && maxCodePoint > 0) {
             builder.withinRange(minCodePoint, maxCodePoint);
         } else {
-            int minCodePoint = Integer.MAX_VALUE;
-            int maxCodePoint = Integer.MIN_VALUE;
+            int minCodePoint = Character.MIN_CODE_POINT;
+            int maxCodePoint = Character.MAX_CODE_POINT;
             if (numeric) {
                 if('1' < minCodePoint){
                     minCodePoint = '1';
@@ -128,8 +132,8 @@ public class StringGenerator {
 
 
     StringGenerator(int length, int minCodePoint, int maxCodePoint, boolean alphabetic,
-                           boolean numeric, boolean lowercase, boolean uppercase, long randomProviderSeed) {
-        this(randomProviderSeed);
+                           boolean numeric, boolean lowercase, boolean uppercase, Long randomProviderSeed) {
+        this.randomProviderSeed = randomProviderSeed;
         this.length = length;
         this.minCodePoint = minCodePoint;
         this.maxCodePoint = maxCodePoint;
@@ -139,17 +143,16 @@ public class StringGenerator {
         this.uppercase = uppercase;
     }
 
-    StringGenerator(long randomProviderSeed) {
-        this.randomProviderSeed = randomProviderSeed;
+    StringGenerator() {
     }
 
     private StringGeneratorBuilder buildCopy() {
-        return new StringGeneratorBuilder(this.randomProviderSeed).length(this.length).alphabetic(this.alphabetic).numeric(this.numeric)
+        return new StringGeneratorBuilder().seed(this.randomProviderSeed).length(this.length).alphabetic(this.alphabetic).numeric(this.numeric)
                 .lowercase(this.lowercase).uppercase(this.uppercase).minCodePoint(this.minCodePoint).maxCodePoint(this.maxCodePoint);
     }
 
     public static class StringGeneratorBuilder {
-        private long randomProviderSeed;
+        private Long randomProviderSeed;
 
         private int length = 10;
         private int minCodePoint;
@@ -159,46 +162,47 @@ public class StringGenerator {
         private boolean lowercase;
         private boolean uppercase;
 
-        StringGeneratorBuilder(long randomProviderSeed) {
+        StringGenerator.StringGeneratorBuilder seed(Long randomProviderSeed) {
             this.randomProviderSeed = randomProviderSeed;
+            return this;
         }
 
-        public StringGenerator.StringGeneratorBuilder length(int length) {
+        StringGenerator.StringGeneratorBuilder length(int length) {
             this.length = length;
             return this;
         }
 
-        public StringGenerator.StringGeneratorBuilder minCodePoint(int minCodePoint) {
+        StringGenerator.StringGeneratorBuilder minCodePoint(int minCodePoint) {
             this.minCodePoint = minCodePoint;
             return this;
         }
 
-        public StringGenerator.StringGeneratorBuilder maxCodePoint(int maxCodePoint) {
+        StringGenerator.StringGeneratorBuilder maxCodePoint(int maxCodePoint) {
             this.maxCodePoint = maxCodePoint;
             return this;
         }
 
-        public StringGenerator.StringGeneratorBuilder alphabetic(boolean alphabetic) {
+        StringGenerator.StringGeneratorBuilder alphabetic(boolean alphabetic) {
             this.alphabetic = alphabetic;
             return this;
         }
 
-        public StringGenerator.StringGeneratorBuilder numeric(boolean numeric) {
+        StringGenerator.StringGeneratorBuilder numeric(boolean numeric) {
             this.numeric = numeric;
             return this;
         }
 
-        public StringGenerator.StringGeneratorBuilder lowercase(boolean lowercase) {
+        StringGenerator.StringGeneratorBuilder lowercase(boolean lowercase) {
             this.lowercase = lowercase;
             return this;
         }
 
-        public StringGenerator.StringGeneratorBuilder uppercase(boolean uppercase) {
+        StringGenerator.StringGeneratorBuilder uppercase(boolean uppercase) {
             this.uppercase = uppercase;
             return this;
         }
 
-        public StringGenerator build() {
+        StringGenerator build() {
             return new StringGenerator(length, minCodePoint, maxCodePoint, alphabetic, numeric, lowercase, uppercase, randomProviderSeed);
         }
 

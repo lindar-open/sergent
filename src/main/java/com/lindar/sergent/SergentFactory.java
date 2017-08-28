@@ -6,10 +6,6 @@ public final class SergentFactory {
         return new Sergent();
     }
 
-    public static Sergent newInstance(long seed) {
-        return new Sergent(seed);
-    }
-
     private SergentFactory() {
     }
 

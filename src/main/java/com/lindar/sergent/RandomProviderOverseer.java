@@ -20,7 +20,7 @@ public class RandomProviderOverseer {
 
         SergentConfigs sergentConfigs = SergentConfigs.INSTANCE;
         if (sergentConfigs.isBackgroundCyclingEnabled()) {
-            UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(intGenerator.randomProviderSeed);
+            UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(intGenerator.getRandomProviderSeed());
 
             int howManyCallsToSkip = randomProvider.nextInt((sergentConfigs.getBackgroundCyclingMaxSkipCounter() - sergentConfigs.getBackgroundCyclingMinSkipCounter()) + 1)
                     + sergentConfigs.getBackgroundCyclingMinSkipCounter();
@@ -44,7 +44,7 @@ public class RandomProviderOverseer {
 
         SergentConfigs sergentConfigs = SergentConfigs.INSTANCE;
         if (sergentConfigs.isBackgroundCyclingEnabled()) {
-            UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(longGenerator.randomProviderSeed);
+            UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(longGenerator.getRandomProviderSeed());
 
             int howManyCallsToSkip = randomProvider.nextInt((sergentConfigs.getBackgroundCyclingMaxSkipCounter() - sergentConfigs.getBackgroundCyclingMinSkipCounter()) + 1)
                     + sergentConfigs.getBackgroundCyclingMinSkipCounter();

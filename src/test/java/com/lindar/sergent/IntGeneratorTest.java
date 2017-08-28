@@ -17,7 +17,7 @@ public class IntGeneratorTest {
 
     @Before
     public void setUp() {
-        sergent = SergentFactory.newInstance(0);
+        sergent = SergentFactory.newInstance();
     }
 
     @Test

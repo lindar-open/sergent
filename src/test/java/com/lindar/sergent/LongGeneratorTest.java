@@ -15,7 +15,7 @@ public class LongGeneratorTest {
 
     @Before
     public void setUp() {
-        sergent = SergentFactory.newInstance(0);
+        sergent = SergentFactory.newInstance();
     }
 
     @Test

@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 
 public class LongGenerator {
 
-    long randomProviderSeed;
+    private Long randomProviderSeed;
     private long min = Long.MIN_VALUE;
     private long max = Long.MAX_VALUE - 1;
     private SortedSet<Long> ignore = Collections.emptySortedSet();
 
-    LongGenerator(long min, long max, List<Long> ignoreList, long randomProviderSeed) {
-        this(randomProviderSeed);
+    LongGenerator(long min, long max, List<Long> ignoreList, Long randomProviderSeed) {
+        this.randomProviderSeed = randomProviderSeed;
         this.min = min;
         this.max = max;
 
@@ -24,8 +24,11 @@ public class LongGenerator {
         }
     }
 
-    public LongGenerator(long randomProviderSeed) {
-        this.randomProviderSeed = randomProviderSeed;
+    LongGenerator() {
+    }
+
+    public LongGenerator withSeed(Long seed) {
+        return buildCopy().seed(seed).build();
     }
 
     public LongGenerator withMinAndMax(long min, long max) {
@@ -82,14 +85,14 @@ public class LongGenerator {
         return r;
     }
 
-    private long countIgnoreListInRange(){
+    private long countIgnoreListInRange() {
         if(ignore.isEmpty()) return 0;
 
         return ignore.stream().filter(i -> i >= min && i <= max).count();
     }
 
     private LongGeneratorBuilder buildCopy() {
-        LongGeneratorBuilder generatorBuilder = new LongGeneratorBuilder(randomProviderSeed).min(this.min).max(this.max);
+        LongGeneratorBuilder generatorBuilder = new LongGeneratorBuilder().seed(randomProviderSeed).min(this.min).max(this.max);
         if (this.ignore != null) {
             generatorBuilder.ignore(new ArrayList<>(this.ignore));
         }
@@ -104,15 +107,20 @@ public class LongGenerator {
         return this.max;
     }
 
+    Long getRandomProviderSeed() {
+        return this.randomProviderSeed;
+    }
+
     static class LongGeneratorBuilder {
         private long min = Long.MIN_VALUE;
         private long max = Long.MAX_VALUE - 1;
         private List<Long> ignore;
 
-        private long randomProviderSeed;
+        private Long randomProviderSeed;
 
-        LongGeneratorBuilder(long randomProviderSeed) {
+        LongGenerator.LongGeneratorBuilder seed(Long randomProviderSeed) {
             this.randomProviderSeed = randomProviderSeed;
+            return this;
         }
 
         LongGenerator.LongGeneratorBuilder min(long min) {

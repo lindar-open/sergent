@@ -15,7 +15,7 @@ public class RandomProviderFactory {
         return randomSource;
     }
 
-    public static UniformRandomProvider getInstance(long randomProviderSeed) {
+    public static UniformRandomProvider getInstance(Long randomProviderSeed) {
         return RandomSource.create(getRandomSource(), randomProviderSeed);
     }
 }
