@@ -2,13 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.0.M4</version>
-    </parent>
-
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lindar</groupId>
     <artifactId>sergent</artifactId>
@@ -58,7 +51,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <java.source-target.version>1.8</java.source-target.version>
         <aspectj.version>1.8.10</aspectj.version>
-        <spring.version>4.3.10.RELEASE</spring.version>
     </properties>
 
     <dependencies>
@@ -124,14 +116,15 @@
 
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>5.0.0.RC4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>5.0.0.RC4</version>
         </dependency>
 
         <dependency>
