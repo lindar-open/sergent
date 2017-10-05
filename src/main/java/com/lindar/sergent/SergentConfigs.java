@@ -15,8 +15,6 @@ enum SergentConfigs {
     private static final String CONFIGS_NAME = "sergent-configs.properties";
 
     private String randomProviderDefaultImpl;
-    private int randomProviderMaxGenerations;
-    private boolean randomProviderManageInstances;
 
     private boolean backgroundCyclingEnabled;
     private int backgroundCyclingMinSkipCounter;
@@ -39,26 +37,16 @@ enum SergentConfigs {
         }
 
         randomProviderDefaultImpl = config.getString("sergent.random-provider.default-implementation", "MT");
-        randomProviderMaxGenerations = config.getInt("sergent.random-provider.max-generations", 10_000);
-        randomProviderManageInstances = config.getBoolean("sergent.random-provider.controlled-reseeding-enabled", true);
 
         backgroundCyclingEnabled = config.getBoolean("sergent.background-cycling.enabled", false);
-        backgroundCyclingMinSkipCounter = config.getInt("sergent.background-cycling.min-skip-counter", 10);
-        backgroundCyclingMaxSkipCounter = config.getInt("sergent.background-cycling.max-skip-counter", 30);
+        backgroundCyclingMinSkipCounter = config.getInt("sergent.background-cycling.min-skip-counter", 1);
+        backgroundCyclingMaxSkipCounter = config.getInt("sergent.background-cycling.max-skip-counter", 3);
 
         System.out.println("Loaded Sergent configs: " + this.toString());
     }
 
     String getRandomProviderDefaultImpl() {
         return randomProviderDefaultImpl;
-    }
-
-    int getRandomProviderMaxGenerations() {
-        return randomProviderMaxGenerations;
-    }
-
-    boolean getRandomProviderManageInstances() {
-        return randomProviderManageInstances;
     }
 
     boolean isBackgroundCyclingEnabled() {
@@ -76,7 +64,6 @@ enum SergentConfigs {
     @Override
     public String toString() {
         return "SergentConfigs{" + "randomProviderDefaultImpl='" + randomProviderDefaultImpl + '\'' +
-                ", randomProviderMaxGenerations=" + randomProviderMaxGenerations +
                 ", backgroundCyclingEnabled=" + backgroundCyclingEnabled +
                 ", backgroundCyclingMinSkipCounter=" + backgroundCyclingMinSkipCounter +
                 ", backgroundCyclingMaxSkipCounter=" + backgroundCyclingMaxSkipCounter +
