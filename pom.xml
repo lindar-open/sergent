@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lindar</groupId>
     <artifactId>sergent</artifactId>
-    <version>2.1.4</version>
+    <version>2.1.5</version>
     <packaging>jar</packaging>
 
     <name>SEcure Random GENeraTor</name>
@@ -274,15 +274,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>http://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>
