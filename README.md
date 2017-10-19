@@ -48,6 +48,6 @@ Usage:
 <dependency>
     <groupId>com.lindar</groupId>
     <artifactId>sergent</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.5</version>
 </dependency>
 ```
