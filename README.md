@@ -1,53 +1,73 @@
-# *SE*cure *R*andom *GEN*era*T*or java library
+# *SE*cure *R*andom *GEN*era*T*or Kotlin library
 
-Sergent now supports background cycling and external configuration: **sergent-configs.properties**
-If you add Sergent as a dependency, all you have to do is create a *sergent-configs.properties* file in your classpath (preferably under src/main/resources) and set your own random implementation or background cycling configs. 
+Sergent is a versatile and secure random number generation (RNG) library for Kotlin, now in its 3.0 release. This latest version has been fully ported to Kotlin and Gradle, offering a more streamlined and user-friendly experience for developers.
 
-And example configs file can be found here: https://github.com/lindar-open/sergent/blob/master/src/main/resources/sergent-configs-example.properties
+## Features
 
+- **Security**: Sergent is built with security as a priority. By default, it uses the `NativePRNGNonBlocking` algorithm, which is cryptographically secure and efficient.
+- **Flexibility**: While the default algorithm is recommended for most use cases, Sergent allows users to specify any other algorithm supported by `SecureRandom`. This makes Sergent adaptable to a wide range of cryptographic needs.
+- **NIST Compliance**: The RNG complies with the NIST RNG test harnesses, ensuring reliable and secure random number generation.
+- **RNG Monitoring**: Sergent includes an advanced monitoring system that performs continuous CHI-Square tests. This ensures the integrity and randomness of the numbers generated, with error handling to transition the RNG into an error state if required.
 
-**Quick Start:**
+## Installation
 
-```java
-Sergent rng = SergentFactory.newInstance();
+Gradle:
 
-// Int Generator
-int randInt = rng.intGenerator().randInt();
-int randIntWithOptions = rng.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(-9,-8,-7,-6,-5)).randInt();
-
-// Long Generator
-long randLong = rng.longGenerator().randLong();
-long randLongWithOptions = rng.longGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(-9,-8,-7,-6,-5)).randLong();
-
-// List Generator
-List<Integer> fiveUniqueRandNumbersFromOneToTen = rng.listGenerator().withMinAndMax(1, 10).ofSize(5).unique().randIntegers();
-// a unique (no duplicates) random integer list starting from 1 to 90
-List<Integer> uniqueSequence = rng.listGenerator().withMinAndMax(1, 90).unique(true).randIntegers();
-
-// String Generator
-String alphabeticUppercaseString = rng.stringGenerator().alphabetic().uppercase().randString();
-String alphaNumericString = rng.stringGenerator().alphanumeric().randString();
-String numericString = rng.stringGenerator().numeric().randString();
-String alphaNumericUppercaseOnlyString = rng.stringGenerator().alphanumeric().uppercase().randString();
-
-// List or array Shuffler
-List<Integer> numbers = IntStream.rangeClosed(1, 100).boxed().collect(Collectors.toList());
-rng.shuffle().list(numbers); // the numbers list is now shuffled randmly
-// you can go even further and shuffle only parts of the list by specifying where to start and the direction
-rng.shuffle().start(50).towardHead().list(numbers); // will shuffle the numbers from 1 to 50
-rng.shuffle().start(50).towardTail().list(numbers); // will shuffle the numbers from 50 to 100
+```kotlin
+dependencies {
+    implementation("com.lindar:sergent:3.0.0")
+}
 ```
 
-**NOTE: All above generators use the same Sergent instance with the same initial configs and seed. If you want to reseed, create a new instance and use that.**
+## Usage
 
-For more examples please check the unit tests: https://github.com/lindar-open/sergent/tree/master/src/test/java/com/lindar/sergent
+Sergent provides a simple and intuitive interface for RNG operations. Here's a quick overview of the functionalities:
 
-Usage: 
+```kotlin
+interface RNG {
 
-```xml
-<dependency>
-    <groupId>com.lindar</groupId>
-    <artifactId>sergent</artifactId>
-    <version>2.1.5</version>
-</dependency>
+    // Discards a random number of numbers from the RNG
+    fun discardNumbers()
+
+    // Returns a random integer between 0 and Int.MAX_VALUE
+    fun nextInt(): Int
+
+    // Returns a random integer between 0 and max (exclusive)
+    fun nextInt(max: Int): Int
+
+    // Returns a random integer between min (inclusive) and max (exclusive)
+    fun nextInt(min: Int, max: Int): Int
+
+    // Shuffles the list in place
+    fun <T> shuffleList(listToShuffle: MutableList<T>)
+
+    // Returns a shuffled copy of the list
+    fun <T> shuffledCopy(list: List<T>): List<T>
+
+    // Returns a shuffled list of all the integers between min (inclusive) and max (inclusive also)
+    fun shuffledIntArray(min: Int, max: Int): IntArray
+}
 ```
+
+```kotlin
+import com.lindar.sergent.SergentRNG
+// Create a new RNG instance
+val rng = SergentRNG()
+
+rng.nextInt()
+```
+
+## RNG Monitoring
+
+Monitoring functionality for RNG.
+
+* It performs a CHI-Square test in the background generating numbers from the given RNG every 500 millis.
+* If the test fails more than 3 times consecutively, the RNG will enter an error state and halt number generation.
+* This is an exceptional case and should not normally occur.
+
+
+## License
+Apache License Version 2.0 (See [LICENSE](LICENSE) for details).
+
+2023 - Lindar Ltd
+
