@@ -23,6 +23,7 @@ dependencies {
 
 Sergent provides a simple and intuitive interface for RNG operations. Here's a quick overview of the functionalities:
 
+### Sergent Interface
 ```kotlin
 interface RNG {
 
@@ -48,6 +49,8 @@ interface RNG {
     fun shuffledIntArray(min: Int, max: Int): IntArray
 }
 ```
+
+### Usage Example
 
 ```kotlin
 import com.lindar.sergent.SergentRNG
