@@ -9,7 +9,11 @@ const val DEFAULT_ALGORITHM = "NativePRNGNonBlocking"
  */
 abstract class InternalRNG(algorithm: String) {
 
-    protected val seeder: SecureRandom = SecureRandom.getInstance(algorithm)
+    protected val seeder: SecureRandom = try {
+        SecureRandom.getInstance(algorithm)
+    } catch (e: Exception) {
+        SecureRandom.getInstanceStrong()
+    }
 
     init {
         //We force the seed creation in the seeder
