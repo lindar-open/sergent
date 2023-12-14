@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "com.lindar"
-version = "3.0.0-SNAPSHOT"
+version = "3.0.0"
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.10"
