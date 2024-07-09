@@ -1,13 +1,14 @@
 package com.lindar.sergent;
 
-import org.apache.commons.rng.UniformRandomProvider;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ListGenerator {
+
+    private SergentRNG sergentRNG = new SergentRNG();
+
     private Long randomProviderSeed;
 
     private int min;
@@ -58,11 +59,9 @@ public class ListGenerator {
 
         if (unique && (listSize == 0 || listSize == max - min)) {
             List<Integer> numbers = IntStream.rangeClosed(min, max).boxed().collect(Collectors.toList());
-            new Shuffler().withSeed(randomProviderSeed).list(numbers);
+            sergentRNG.shuffleList(numbers);
             return numbers;
         }
-
-        UniformRandomProvider randomProvider = RandomProviderFactory.getInstance(this.randomProviderSeed);
 
         int diff = max - min + 1;
         List<Integer> randomList = new ArrayList<>(listSize);
@@ -76,7 +75,7 @@ public class ListGenerator {
             if (unique && diff >= listSize) {
                 intGen = intGen.ignore(randomList);
             }
-            randomList.add(intGen.randInt(randomProvider));
+            randomList.add(intGen.randInt());
         });
 
         return randomList;

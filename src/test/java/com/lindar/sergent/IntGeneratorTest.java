@@ -54,19 +54,9 @@ public class IntGeneratorTest {
     @Test
     //@DisplayName("Test using withMinAndMax (Negative to Positive Ranges)")
     public void testWithMinAndMaxNegativeToPositiveRanges(){
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-1, 1), 10000), -1, 1);
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10), 10000), -10, 10);
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-100, 0), 10000), -100, 0);
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(Integer.MIN_VALUE, Integer.MAX_VALUE - 1), 10000), Integer.MIN_VALUE, Integer.MAX_VALUE - 1);
-    }
-
-    @Test
-    //@DisplayName("Test using withMinAndMax (Negative Ranges)")
-    public void testWithMinAndMaxNegativeRanges(){
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, -5), 10000), -10, -5);
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-1000, -999), 10000), -1000, -999);
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-100, -50), 10000), -100, -50);
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(Integer.MIN_VALUE, Integer.MIN_VALUE + 50), 10000), Integer.MIN_VALUE, Integer.MIN_VALUE + 50);
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 1), 10000), 0, 1);
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10), 10000), 0, 10);
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, Integer.MAX_VALUE - 1), 10000), 0, Integer.MAX_VALUE - 1);
     }
 
     @Test
@@ -75,9 +65,8 @@ public class IntGeneratorTest {
         Assertions.assertThatIllegalArgumentException().isThrownBy(() -> sergent.intGenerator().withMinAndMax(0, Integer.MAX_VALUE));// "Max >= Integer.MAX_VALUE shouldn't be allowed");
         Assertions.assertThatIllegalArgumentException().isThrownBy(() -> sergent.intGenerator().withMinAndMax(0, Integer.MIN_VALUE));// "Max <= 0 shouldn't be allowed");
         Assertions.assertThatIllegalArgumentException().isThrownBy(() -> sergent.intGenerator().withMinAndMax(0, 0));// "Max <= 0 shouldn't be allowed");
-        Assertions.assertThatIllegalArgumentException().isThrownBy(() -> sergent.intGenerator().withMinAndMax(0, -1));// "Max <= 0 shouldn't be allowed");
         Assertions.assertThatIllegalArgumentException().isThrownBy(() -> sergent.intGenerator().withMinAndMax(10, 5));// "Max < Min shouldn't be allowed");
-        Assertions.assertThatIllegalArgumentException().isThrownBy(() -> sergent.intGenerator().withMinAndMax(-5, -10));// "Max < Min shouldn't be allowed");
+        Assertions.assertThatIllegalArgumentException().isThrownBy(() -> sergent.intGenerator().withMinAndMax(-5, 10));// "Min smaller than 0 shouldn't be allowed");
     }
 
     @Test
@@ -115,30 +104,30 @@ public class IntGeneratorTest {
     //@DisplayName("Test using ignore with negative and positive numbers")
     public void testIgnoreNegativePositive(){
         // single number
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(0)), 10000), -10, 10, Arrays.asList(0));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(0)), 10000), 0, 10, Arrays.asList(0));
         // single number
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(-5)), 10000), -10, 10, Arrays.asList(-5));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(5)), 10000), 0, 10, Arrays.asList(5));
         // single number - origin
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(-10)), 10000), -10, 10, Arrays.asList(-10));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(10)), 10000), 0, 10, Arrays.asList(10));
         // single number - bound
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(10)), 10000), -10, 10, Arrays.asList(10));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(10)), 10000), 0, 10, Arrays.asList(10));
         // first half of numbers except the bound
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(-9,-8,-7,-6,-5)), 10000), -10, 10, Arrays.asList(-9,-8,-7,-6,-5));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(9,8,7,6,5)), 10000), 0, 10, Arrays.asList(9,8,7,6,5));
         // first half of numbers
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(-10,-9,-8,-7,-6,-5)), 10000), -10, 10, Arrays.asList(-10,-9,-8,-7,-6,-5));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(10,9,8,7,6,5)), 10000), 0, 10, Arrays.asList(-10,-9,-8,-7,-6,-5));
         // spaced out numbers
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(-10,-8,-6,-4)), 10000), -10, 10, Arrays.asList(-10,-8,-6,-4));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(10,8,6,4)), 10000), 0, 10, Arrays.asList(-10,-8,-6,-4));
         // all numbers except one
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(-10,-9,-8,-7,-6,-5,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10)), 10000), -10, 10, Arrays.asList(-10,-9,-8,-7,-6,-5,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 20).ignore(Arrays.asList(0,1,2,3,4,5,6,7,8,9,10)), 10000), 0, 20, Arrays.asList(0,1,2,3,4,5,6,7,8,9,10));
         // numbers outside of range
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(-11,-12,-13,-14,-15)), 10000), -10, 10, Arrays.asList(-11,-12,-13,-14,-15));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(11,12,13,14,15)), 10000), 0, 10, Arrays.asList(11,12,13,14,15));
         // mixture
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(-10, 10).ignore(Arrays.asList(-10,-7,-6,-5,-1,0,1,4,5,6,9)), 10000), -10, 10, Arrays.asList(-10,-7,-6,-5,-1,0,1,4,5,6,9));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(10,7,6,5,1,0,1,4,5,6,9)), 10000), 0, 10, Arrays.asList(10,7,6,5,1,0,1,4,5,6,9));
     }
 
     private void testAllNumbersInRange(List<Integer> list, int min, int max){
         Assert.assertFalse("All numbers should be between "+min+" and "+max+" inclusive",
-                list.stream().anyMatch(r -> r < min || r > max));
+                           list.stream().anyMatch(r -> r < min || r > max));
     }
 
     private void testAllNumbersInRange(List<Integer> list, int min, int max, List<Integer> ignore){

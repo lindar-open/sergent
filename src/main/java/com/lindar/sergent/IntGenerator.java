@@ -1,15 +1,15 @@
 package com.lindar.sergent;
 
-import org.apache.commons.rng.UniformRandomProvider;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class IntGenerator {
 
+    private SergentRNG sergentRNG = new SergentRNG();
+
     private Long randomProviderSeed;
 
-    private int min = Integer.MIN_VALUE;
+    private int min = 0;
     private int max = Integer.MAX_VALUE - 1;
     private SortedSet<Integer> ignore = Collections.emptySortedSet();
 
@@ -33,6 +33,7 @@ public class IntGenerator {
     }
 
     public IntGenerator withMinAndMax(int min, int max) {
+        if (min<0) throw new IllegalArgumentException("Min has to be positive or 0");
         if (max <= min || max == Integer.MAX_VALUE) throw new IllegalArgumentException("Max has to be greater then Min and less then Integer.MAX_VALUE");
         return buildCopy().min(min).max(max).build();
     }
@@ -51,47 +52,15 @@ public class IntGenerator {
     }
 
     public int randInt() {
-        return randInt(RandomProviderFactory.getInstance(this.randomProviderSeed));
+        return randInt(sergentRNG);
     }
 
-    int randInt(UniformRandomProvider randomProvider) {
-        int origin = min;
-        int bound = max + 1;
-
-        int r = randomProvider.nextInt();
-        int n = bound - origin - countIgnoreListInRange(), m = n - 1;
-        if ((n & m) == 0) // power of two
-            r = (r & m) + origin;
-        else if (n > 0) { // reject over-represented candidates
-            for (int u = r >>> 1; // ensure nonnegative
-                u + m - (r = u % n) < 0; // rejection check
-                u = randomProvider.nextInt() >>> 1); // retry
-            r += origin;
+    int randInt(SergentRNG randomProvider) {
+        int number = randomProvider.nextInt(min, max);
+        while (ignore.contains(number)) {
+            number = randomProvider.nextInt(min, max);
         }
-        else { // range not representable
-            while (r < origin || r >= bound || ignore.contains(r))
-                r = randomProvider.nextInt();
-            return r;
-        }
-
-        for (Integer exclude : ignore) {
-            if(exclude < min || exclude > max){
-                continue;
-            }
-            if (exclude > r) {
-                return r;
-            }
-
-            r++;
-        }
-
-        return r;
-    }
-
-    private int countIgnoreListInRange(){
-        if(ignore.isEmpty()) return 0;
-
-        return (int) ignore.stream().filter(i -> i >= min && i <= max).count();
+        return number;
     }
 
     private IntGeneratorBuilder buildCopy() {
