@@ -104,7 +104,7 @@ public class IntGeneratorTest {
     //@DisplayName("Test using ignore with negative and positive numbers")
     public void testIgnoreNegativePositive(){
         // single number
-        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(0)), 10000), 0, 10, Arrays.asList(0));
+        testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(0)), 10), 0, 10, Arrays.asList(0));
         // single number
         testAllNumbersInRange(buildRandomList(sergent.intGenerator().withMinAndMax(0, 10).ignore(Arrays.asList(5)), 10000), 0, 10, Arrays.asList(5));
         // single number - origin

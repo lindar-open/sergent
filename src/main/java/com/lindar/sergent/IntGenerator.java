@@ -56,9 +56,9 @@ public class IntGenerator {
     }
 
     int randInt(SergentRNG randomProvider) {
-        int number = randomProvider.nextInt(min, max);
+        int number = randomProvider.nextInt(min, max + 1);
         while (ignore.contains(number)) {
-            number = randomProvider.nextInt(min, max);
+            number = randomProvider.nextInt(min, max + 1);
         }
         return number;
     }

@@ -19,4 +19,8 @@ public class Sergent {
         return new ListGenerator();
     }
 
+    public Shuffler shuffle() {
+        return new Shuffler();
+    }
+
 }
